@@ -10,7 +10,7 @@
 		<spring.version>3.0.5.RELEASE</spring.version>
 	</properties>
 
-	<dependencyMangement>
+	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -37,8 +37,7 @@
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
-	</dependencyMangement>
-
+	</dependencyManagement>
 
 	<build>
 		<plugins>
@@ -53,4 +52,7 @@
 			</plugin>
 		</plugins>
 	</build>
+	<modules>
+		<module>steed-quiz</module>
+	</modules>
 </project>
