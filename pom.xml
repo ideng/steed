@@ -43,6 +43,16 @@
 				<artifactId>spring-tx</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+				<version>3.1</version>
+			</dependency>
 
 			<!-- hibernate -->
 			<dependency>
@@ -66,6 +76,11 @@
 				<version>3.5.6-Final</version>
 			</dependency>
 
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.6</version>
+			</dependency>
 			<!-- inject -->
 			<dependency>
 				<groupId>javax.inject</groupId>
@@ -79,7 +94,11 @@
 				<artifactId>guava</artifactId>
 				<version>14.0.1</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>1.9.13</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -104,5 +123,6 @@
 	</build>
 	<modules>
 		<module>steed-quiz</module>
+		<module>steed-common</module>
 	</modules>
 </project>
