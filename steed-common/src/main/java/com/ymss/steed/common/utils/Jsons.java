@@ -1,8 +1,9 @@
 package com.ymss.steed.common.utils;
 
-import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -22,14 +23,12 @@ public class Jsons {
      * @param obj
      * @return
      */
-    public static String toJson(Object obj) {
+    public static String obj2Json(Object obj) {
         if (obj == null) return null;
 
         try {
             return MAPPER.writeValueAsString(obj);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
 
         return null;
     }
@@ -40,24 +39,64 @@ public class Jsons {
      * @param out
      * @param obj
      */
-    public static void writeJson(OutputStream out, Object obj) {
+    public static void writeAsJson(OutputStream out, Object obj) {
         if (out == null || obj == null) return;
 
         try {
             MAPPER.writeValue(out, obj);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 
-    public static <T> T fromJson(Class<T> clazz, String json) {
-        return null;
+    /**
+     * Convert JSON to object
+     * 
+     * @param json
+     * @param clazz
+     * @return
+     */
+    public static <T> T json2Obj(String json, Class<T> clazz) {
+        if (json == null) return null;
 
+        try {
+            return MAPPER.readValue(json, clazz);
+        } catch (Exception e) {}
+
+        return null;
     }
 
-    public static <T> List<T> fromJsonAsList(Class<T[]> clazz, String json) {
-        return null;
+    /**
+     * Convert JSON to List
+     * 
+     * @param json
+     * @param clazz
+     * @return
+     */
+    public static <T> List<T> json2List(String json, Class<T[]> clazz) {
+        if (json == null) return null;
 
+        try {
+            T[] ts = MAPPER.readValue(json, clazz);
+            return Arrays.asList(ts);
+        } catch (Exception e) {}
+
+        return null;
+    }
+
+    /**
+     * Convert JSON to Set
+     * 
+     * @param json
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Set<T> json2Set(String json, Class<T> clazz) {
+        if (json == null) return null;
+
+        try {
+            return MAPPER.readValue(json, Set.class);
+        } catch (Exception e) {}
+
+        return null;
     }
 }
