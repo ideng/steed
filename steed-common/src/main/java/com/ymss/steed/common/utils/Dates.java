@@ -1,0 +1,138 @@
+package com.ymss.steed.common.utils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+/**
+ * Date Utilities
+ * 
+ * @author hui.deng
+ *
+ */
+public class Dates {
+
+    public static final String yyyyMMdd = "yyyy-MM-dd";
+    public static final String MMddyyyy = "MM-dd-yyyy";
+    public static final String MMddyy = "MM-dd-yy";
+    public static final String MMMdyy = "MMM d yy";
+
+    public static final String HHmmss = "HH:mm:ss";
+    public static final String HHmm = "HH:mm";
+    public static final String HHmma = "HH:mm a";
+    public static final String HHmmssSSS = "HH:mm:ss SSS";
+
+    /**
+     * Format Date
+     * 
+     * @param date
+     * @param format
+     * @return
+     */
+    public static String format(Calendar date, String format) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(date.getTime());
+    }
+
+    /**
+     * Format now
+     * 
+     * @param format
+     * @return
+     */
+    public static String formatNow(String format) {
+        Calendar now = now();
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(now.getTime());
+    }
+
+    /**
+     * Current date and time
+     * 
+     * @return
+     */
+    public static Calendar now() {
+        return Calendar.getInstance();
+    }
+
+    /**
+     * Date and time before now
+     * 
+     * @param mills
+     * @return
+     */
+    public static Calendar beforeNow(long mills) {
+        Calendar now = now();
+        now.setTimeInMillis(now.getTimeInMillis() - mills);
+        return now;
+    }
+
+    /**
+     * Date and time after now
+     * 
+     * @param mills
+     * @return
+     */
+    public static Calendar afterNow(long mills) {
+        Calendar now = now();
+        now.setTimeInMillis(now.getTimeInMillis() + mills);
+        return now;
+    }
+
+    /**
+     * Date and time before specified calendar
+     * 
+     * @param base
+     * @param mills
+     * @return
+     */
+    public static Calendar before(Calendar base, long mills) {
+        if (base == null) return null;
+        base.setTimeInMillis(base.getTimeInMillis() - mills);
+        return base;
+    }
+
+    /**
+     * Date and time after specified calendar
+     * 
+     * @param base
+     * @param mills
+     * @return
+     */
+    public static Calendar after(Calendar base, long mills) {
+        if (base == null) return null;
+        base.setTimeInMillis(base.getTimeInMillis() + mills);
+        return base;
+    }
+
+    /**
+     * Parse string as date using format
+     * 
+     * @param date
+     * @param format
+     * @return
+     * @throws ParseException
+     */
+    public static Calendar parse(String date, String format) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        Calendar calendar = now();
+        calendar.setTime(sdf.parse(date));
+        return calendar;
+    }
+
+    /**
+     * Check whether string can be parsed as date using format
+     * 
+     * @param date
+     * @param format
+     * @return
+     */
+    public static boolean isValid(String date, String format) {
+        try {
+            parse(date, format);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+}
