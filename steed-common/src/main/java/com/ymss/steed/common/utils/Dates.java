@@ -41,9 +41,7 @@ public class Dates {
      * @return
      */
     public static String formatNow(String format) {
-        Calendar now = now();
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        return sdf.format(now.getTime());
+        return format(now(), format);
     }
 
     /**
@@ -62,9 +60,7 @@ public class Dates {
      * @return
      */
     public static Calendar beforeNow(long mills) {
-        Calendar now = now();
-        now.setTimeInMillis(now.getTimeInMillis() - mills);
-        return now;
+        return before(now(), mills);
     }
 
     /**
@@ -74,9 +70,7 @@ public class Dates {
      * @return
      */
     public static Calendar afterNow(long mills) {
-        Calendar now = now();
-        now.setTimeInMillis(now.getTimeInMillis() + mills);
-        return now;
+        return after(now(), mills);
     }
 
     /**
