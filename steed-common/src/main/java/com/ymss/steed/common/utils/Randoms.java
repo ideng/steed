@@ -3,10 +3,9 @@ package com.ymss.steed.common.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
-
-import com.google.common.collect.Collections2;
+import java.util.Set;
 
 /**
  * Random utilities
@@ -28,16 +27,21 @@ public class Randoms {
 
         List<E> list = new ArrayList<E>(col);
         Collections.shuffle(list);
-        List<T> retList = new ArrayList<T>();
-        Iterator<T> iterator = srcList.iterator();
-        while (iterator.hasNext()) {
-            T next = iterator.next();
-            retList.add(next);
-            if (retList.size() >= count) {
-                break;
-            }
+
+        Collection<E> ret;
+        if (col instanceof List) {
+            ret = new ArrayList<E>(limit);
+        } else if (col instanceof Set) {
+            ret = new HashSet<E>(limit);
+        } else {
+            throw new IllegalArgumentException("unsupported collection");
         }
 
-        return retList;
+        for (E e : list) {
+            ret.add(e);
+            if (ret.size() >= limit) break;
+        }
+
+        return ret;
     }
 }

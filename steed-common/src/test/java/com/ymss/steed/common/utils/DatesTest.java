@@ -2,7 +2,7 @@ package com.ymss.steed.common.utils;
 
 import org.junit.Test;
 
-public class DateFormatterTest {
+public class DatesTest {
 
     @Test
     public void test() {
