@@ -1,6 +1,9 @@
 package com.ymss.steed.common.utils;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.FieldDictionary;
+import com.thoughtworks.xstream.converters.reflection.SortableFieldKeySorter;
+import com.thoughtworks.xstream.converters.reflection.SunUnsafeReflectionProvider;
 
 /**
  * XML Utilities
@@ -20,7 +23,22 @@ public class Xmls {
         if (obj == null) return null;
 
         XStream xstream = new XStream();
-        xstream.autodetectAnnotations(true);
+        xstream.processAnnotations(obj.getClass());
+        return xstream.toXML(obj);
+    }
+
+    /**
+     * Convert object to XML with ordered nodes
+     * 
+     * @param obj
+     * @param sorter
+     * @return
+     */
+    public static String obj2Xml(Object obj, SortableFieldKeySorter sorter) {
+        if (obj == null || sorter == null) return obj2Xml(obj);
+
+        XStream xstream = new XStream(new SunUnsafeReflectionProvider(new FieldDictionary(sorter)));;
+        xstream.processAnnotations(obj.getClass());
         return xstream.toXML(obj);
     }
 
@@ -36,7 +54,7 @@ public class Xmls {
         if (xml == null) return null;
 
         XStream xstream = new XStream();
-        xstream.autodetectAnnotations(true);
+        xstream.processAnnotations(clazz);
         return (T) xstream.fromXML(xml);
     }
 }
