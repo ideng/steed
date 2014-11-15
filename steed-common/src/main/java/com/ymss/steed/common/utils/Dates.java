@@ -20,7 +20,7 @@ public class Dates {
     public static final String HHmmss = "HH:mm:ss";
     public static final String HHmm = "HH:mm";
     public static final String HHmma = "HH:mm a";
-    public static final String HHmmssSSS = "HH:mm:ss SSS";
+    public static final String HHmmssSSS = "HH:mm:ss.SSS";
 
     /**
      * Format Date
