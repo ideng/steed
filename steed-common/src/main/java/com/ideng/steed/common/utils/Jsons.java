@@ -1,4 +1,4 @@
-package com.ymss.steed.common.utils;
+package com.ideng.steed.common.utils;
 
 import java.io.OutputStream;
 import java.util.Arrays;

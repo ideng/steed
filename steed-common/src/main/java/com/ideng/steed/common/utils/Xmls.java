@@ -1,4 +1,4 @@
-package com.ymss.steed.common.utils;
+package com.ideng.steed.common.utils;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.FieldDictionary;

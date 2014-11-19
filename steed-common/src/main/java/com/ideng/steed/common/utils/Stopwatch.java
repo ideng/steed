@@ -1,4 +1,4 @@
-package com.ymss.steed.common.utils;
+package com.ideng.steed.common.utils;
 
 import java.util.ArrayList;
 import java.util.List;

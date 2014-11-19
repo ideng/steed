@@ -1,4 +1,4 @@
-package com.ymss.steed.common.utils;
+package com.ideng.steed.common.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +7,8 @@ import java.util.List;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.ideng.steed.common.utils.Randoms;
 
 public class RandomsTest {
 

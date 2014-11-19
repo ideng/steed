@@ -1,4 +1,4 @@
-package com.ymss.steed.common.utils;
+package com.ideng.steed.common.utils;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.ideng.steed.common.utils.Stopwatch;
 
 public class StopwatchTest {
 
