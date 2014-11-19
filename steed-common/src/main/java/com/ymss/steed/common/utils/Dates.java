@@ -53,6 +53,15 @@ public class Dates {
         return Calendar.getInstance();
     }
 
+	/**
+     * Current date and time with specified format
+     * 
+     * @return
+     */
+	public static Calendar now(String format) throws ParseException {
+		return parse(formatNow(format), format);
+    }
+	
     /**
      * Date and time before now
      * 
