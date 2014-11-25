@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.apache.http.util.Args;
+
 /**
  * Date Utilities
  * 
@@ -30,6 +32,8 @@ public class Dates {
      * @return
      */
     public static String format(Calendar date, String format) {
+        Args.notNull(date, "date");
+        Args.notNull(format, "format");
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(date.getTime());
     }
@@ -90,7 +94,7 @@ public class Dates {
      * @return
      */
     public static Calendar before(Calendar base, long mills) {
-        if (base == null) return null;
+        Args.notNull(base, "base");
         base.setTimeInMillis(base.getTimeInMillis() - mills);
         return base;
     }
@@ -103,7 +107,7 @@ public class Dates {
      * @return
      */
     public static Calendar after(Calendar base, long mills) {
-        if (base == null) return null;
+        Args.notNull(base, "base");
         base.setTimeInMillis(base.getTimeInMillis() + mills);
         return base;
     }
@@ -117,6 +121,8 @@ public class Dates {
      * @throws ParseException
      */
     public static Calendar parse(String date, String format) throws ParseException {
+        Args.notNull(date, "date");
+        Args.notNull(format, "format");
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         Calendar calendar = now();
         calendar.setTime(sdf.parse(date));

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.util.Args;
+
 /**
  * Simple stop watch
  * 
@@ -32,7 +34,8 @@ public class Stopwatch {
      * @return null if not started or marked
      */
     public List<Long> getDuration(TimeUnit unit) {
-        if (startTime == 0 || markedTimes.isEmpty()) return null;
+        Args.check(startTime > 0, "stopwatch hasn't been started");
+        Args.check(!markedTimes.isEmpty(), "stopwatch hasn't been marked");
 
         List<Long> durations = new ArrayList<Long>();
         for (TimeUnit u : TimeUnit.values()) {

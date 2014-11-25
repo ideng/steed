@@ -3,6 +3,8 @@ package com.ideng.steed.common.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.util.Args;
+
 import net.sourceforge.pinyin4j.PinyinHelper;
 
 /**
@@ -20,7 +22,7 @@ public class Pinyins {
      * @return
      */
     public static String fullPinyin(String cn) {
-        if (cn == null) return null;
+        Args.notNull(cn, "cn");
 
         String fullPinYin = "";
         for (int i = 0; i < cn.length(); i++) {
@@ -44,7 +46,7 @@ public class Pinyins {
      * @return
      */
     public static String shortPinyin(String cn) {
-        if (cn == null) return null;
+        Args.notNull(cn, "cn");
 
         String shortPinYin = "";
         for (int i = 0; i < cn.length(); i++) {

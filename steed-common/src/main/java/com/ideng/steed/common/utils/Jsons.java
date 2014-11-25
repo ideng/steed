@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.http.util.Args;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -24,7 +25,7 @@ public class Jsons {
      * @return
      */
     public static String obj2Json(Object obj) {
-        if (obj == null) return null;
+        Args.notNull(obj, "obj");
 
         try {
             return MAPPER.writeValueAsString(obj);
@@ -40,7 +41,8 @@ public class Jsons {
      * @param obj
      */
     public static void writeAsJson(OutputStream out, Object obj) {
-        if (out == null || obj == null) return;
+        Args.notNull(out, "out");
+        Args.notNull(obj, "obj");
 
         try {
             MAPPER.writeValue(out, obj);
@@ -55,7 +57,8 @@ public class Jsons {
      * @return
      */
     public static <T> T json2Obj(String json, Class<T> clazz) {
-        if (json == null) return null;
+        Args.notNull(json, "json");
+        Args.notNull(clazz, "clazz");
 
         try {
             return MAPPER.readValue(json, clazz);
@@ -72,7 +75,8 @@ public class Jsons {
      * @return
      */
     public static <T> List<T> json2List(String json, Class<T[]> clazz) {
-        if (json == null) return null;
+        Args.notNull(json, "json");
+        Args.notNull(clazz, "clazz");
 
         try {
             T[] ts = MAPPER.readValue(json, clazz);
@@ -91,7 +95,8 @@ public class Jsons {
      */
     @SuppressWarnings("unchecked")
     public static <T> Set<T> json2Set(String json, Class<T> clazz) {
-        if (json == null) return null;
+        Args.notNull(json, "json");
+        Args.notNull(clazz, "clazz");
 
         try {
             return MAPPER.readValue(json, Set.class);

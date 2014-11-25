@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.http.util.Args;
+
 /**
  * Random utilities
  * 
@@ -23,7 +25,9 @@ public class Randoms {
      * @return
      */
     public static <E> Collection<E> rand(Collection<E> col, int limit) {
-        if (col == null || col.size() == 0) return col;
+        Args.notNull(col, "col");
+        Args.positive(limit, "limit");
+        if (col.size() == 0) return col;
 
         List<E> list = new ArrayList<E>(col);
         Collections.shuffle(list);

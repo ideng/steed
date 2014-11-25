@@ -1,5 +1,7 @@
 package com.ideng.steed.common.utils;
 
+import org.apache.http.util.Args;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.FieldDictionary;
 import com.thoughtworks.xstream.converters.reflection.SortableFieldKeySorter;
@@ -20,7 +22,7 @@ public class Xmls {
      * @return
      */
     public static String obj2Xml(Object obj) {
-        if (obj == null) return null;
+        Args.notNull(obj, "obj");
 
         XStream xstream = new XStream();
         xstream.processAnnotations(obj.getClass());
@@ -35,7 +37,7 @@ public class Xmls {
      * @return
      */
     public static String obj2Xml(Object obj, SortableFieldKeySorter sorter) {
-        if (obj == null || sorter == null) return obj2Xml(obj);
+        if (sorter == null) return obj2Xml(obj);
 
         XStream xstream = new XStream(new SunUnsafeReflectionProvider(new FieldDictionary(sorter)));;
         xstream.processAnnotations(obj.getClass());
@@ -51,7 +53,7 @@ public class Xmls {
      */
     @SuppressWarnings("unchecked")
     public static <T> T xml2Obj(String xml, Class<T> clazz) {
-        if (xml == null) return null;
+        Args.notNull(xml, "xml");
 
         XStream xstream = new XStream();
         xstream.processAnnotations(clazz);
