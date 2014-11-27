@@ -6,12 +6,12 @@ package com.ideng.steed.common.exceptions;
  * @author Administrator
  *
  */
-public enum ErrorStatus {
+public enum ErrorCode {
 
     OK(200, "OK"),
     ERROR_UNKNOWN(100, "ERROR_UNKNOWN");
 
-    private ErrorStatus(int code, String type) {
+    private ErrorCode(int code, String type) {
         this.code = code;
         this.type = type;
     }

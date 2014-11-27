@@ -9,26 +9,26 @@ package com.ideng.steed.common.exceptions;
 public class SteedException extends RuntimeException {
     private static final long serialVersionUID = -1514949907784004043L;
 
-    private ErrorStatus error;
+    private ErrorCode error;
     private String detail;
     private Exception innerException;
 
-    public SteedException(ErrorStatus error, String detail) {
+    public SteedException(ErrorCode error, String detail) {
         super(error.toString() + ": " + detail);
 
         this.error = error;
     }
 
-    public SteedException(ErrorStatus error, String detail, Exception inner) {
+    public SteedException(ErrorCode error, String detail, Exception inner) {
         this(error, detail);
         this.innerException = inner;
     }
 
-    public ErrorStatus getError() {
+    public ErrorCode getError() {
         return error;
     }
 
-    public void setError(ErrorStatus error) {
+    public void setError(ErrorCode error) {
         this.error = error;
     }
 
