@@ -48,6 +48,32 @@ public class HttpClients2 {
     }
 
     /**
+     * Http get on specified uri with reties, return null if all failed.
+     * 
+     * @param uri
+     * @param handler
+     * @param reties
+     * @return
+     * @throws Exception
+     */
+    public static <T> T get(final URI uri, ResponseHandler<T> handler, int reties) throws Exception {
+        Args.notNull(uri, "uri");
+        Args.notNull(handler, "handler");
+
+        for (int i = 0; i < reties; i++) {
+            try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+                HttpGet httpget = new HttpGet(uri);
+                CloseableHttpResponse response = httpclient.execute(httpget);
+                return handler.handleResponse(response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Http get on specified uri with timeout.
      * 
      * @param uri
