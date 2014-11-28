@@ -9,7 +9,8 @@ package com.ideng.steed.common.exceptions;
 public enum ErrorStatus {
 
     OK(200, "OK"),
-    ERROR_UNKNOWN(100, "ERROR_UNKNOWN");
+    UNKNOWN(100, "UNKNOWN"),
+    EXECUTION_FAILED(101, "EXECUTION_FAILED");
 
     private ErrorStatus(int code, String type) {
         this.code = code;
