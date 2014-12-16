@@ -2,10 +2,6 @@ package com.ideng.steed.common.http;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.ResponseHandler;
@@ -34,7 +30,7 @@ public class HttpClients2 {
      * @throws Exception
      */
     public static <T> T get(final URI uri, ResponseHandler<T> handler) throws Exception {
-        Args.notNull(uri, "uri"); 
+        Args.notNull(uri, "uri");
         Args.notNull(handler, "handler");
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
@@ -88,23 +84,14 @@ public class HttpClients2 {
         Args.notNull(uri, "uri");
         Args.notNull(handler, "handler");
 
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        Future<CloseableHttpResponse> future = es.submit(new Callable<CloseableHttpResponse>() {
-
-            @Override
-            public CloseableHttpResponse call() throws Exception {
-                try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-                    HttpGet httpget = new HttpGet(uri);
-                    return httpclient.execute(httpget);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw SteedError.ExecutionError(e);
-                }
-            }
-
-        });
-
-        CloseableHttpResponse response = future.get(timeout, unit);
-        return handler.handleResponse(response);
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            HttpGet httpget = new HttpGet(uri);
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            return handler.handleResponse(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw SteedError.ExecutionError(e);
+        }
     }
+
 }
