@@ -34,7 +34,7 @@ public class HttpClients2 {
      * @throws Exception
      */
     public static <T> T get(final URI uri, ResponseHandler<T> handler) throws Exception {
-        Args.notNull(uri, "uri");
+        Args.notNull(uri, "uri"); 
         Args.notNull(handler, "handler");
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
