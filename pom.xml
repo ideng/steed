@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ideng</groupId>
-	<artifactId>steed-parent</artifactId>
+	<artifactId>parent</artifactId>
 	<version>1.0</version>
 	<packaging>pom</packaging>
 
@@ -151,7 +151,7 @@
 		</plugins>
 	</build>
 	<modules>
-		<module>steed-quiz</module>
-		<module>steed-common</module>
+		<module>quiz</module>
+		<module>common</module>
 	</modules>
 </project>
