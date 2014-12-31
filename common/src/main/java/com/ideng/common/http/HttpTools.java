@@ -1,6 +1,7 @@
 package com.ideng.common.http;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -17,6 +18,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.Args;
+
+import com.bj58.seo.utils.JsonUtils;
+import com.ideng.common.utils.Jsons;
 
 /**
  * Http operations
@@ -102,6 +106,35 @@ public class HttpTools {
         public StatusLine handleResponse(HttpResponse response) throws ClientProtocolException,
                 IOException {
             return response.getStatusLine();
+        }
+
+    }
+    
+    /**
+     * JsonEntityHandler
+     * 
+     * @author hui.deng
+     *
+     * @param <T>
+     */
+    public static class JsonEntityHandler<T> implements ResponseHandler<T> {
+
+        private Class<T> clazz;
+
+        public JsonEntityHandler(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        @Override
+        public T handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+            try {
+                InputStream in = response.getEntity().getContent();
+                return Jsons.json2Object(in, clazz);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
 
     }

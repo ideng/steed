@@ -1,5 +1,6 @@
 package com.ideng.common.utils;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,9 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class Jsons {
 
+    /**
+     * Shared ObjectMapper
+     */
     public static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
@@ -67,6 +71,24 @@ public class Jsons {
         return null;
     }
 
+    /**
+     * Convert JSON to object
+     * 
+     * @param json
+     * @param clazz
+     * @return
+     */
+    public static <T> T json2Obj(InputStream in, Class<T> clazz) {
+        Args.notNull(in, "in");
+        Args.notNull(clazz, "clazz");
+
+        try {
+            return MAPPER.readValue(in, clazz);
+        } catch (Exception e) {}
+
+        return null;
+    }
+    
     /**
      * Convert JSON to List
      * 
