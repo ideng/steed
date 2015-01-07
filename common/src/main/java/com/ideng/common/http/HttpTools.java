@@ -19,7 +19,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.Args;
 
-import com.bj58.seo.utils.JsonUtils;
 import com.ideng.common.utils.Jsons;
 
 /**
@@ -109,7 +108,7 @@ public class HttpTools {
         }
 
     }
-    
+
     /**
      * JsonEntityHandler
      * 
@@ -129,7 +128,7 @@ public class HttpTools {
         public T handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
             try {
                 InputStream in = response.getEntity().getContent();
-                return Jsons.json2Object(in, clazz);
+                return Jsons.json2Obj(in, clazz);
             } catch (Exception e) {
                 e.printStackTrace();
             }
