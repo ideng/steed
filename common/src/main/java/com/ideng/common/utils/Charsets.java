@@ -32,7 +32,7 @@ public class Charsets {
         }
         return new String(Arrays.copyOf(cc, j), Charset.forName("utf-8"));
     }
-    
+
     public static void main(String[] args) throws Exception {
         String t = "𠂇TR自行车";
         System.out.println(remove4BytesUTF8Char(t));
