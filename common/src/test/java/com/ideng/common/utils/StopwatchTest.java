@@ -7,7 +7,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.ideng.common.utils.Stopwatch;
+import com.mdeng.common.utils.Stopwatch;
 
 public class StopwatchTest {
 

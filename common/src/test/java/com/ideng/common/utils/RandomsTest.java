@@ -8,7 +8,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.ideng.common.utils.Randoms;
+import com.mdeng.common.utils.Randoms;
 
 public class RandomsTest {
 

@@ -2,7 +2,7 @@ package com.ideng.common.utils;
 
 import org.junit.Test;
 
-import com.ideng.common.utils.Dates;
+import com.mdeng.common.utils.Dates;
 
 public class DatesTest {
 
