@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<spring.version>3.0.5.RELEASE</spring.version>
+		<spring.version>3.2.3.RELEASE</spring.version>
 	</properties>
 
 	<dependencyManagement>
@@ -17,7 +17,14 @@
 				<artifactId>log4j</artifactId>
 				<version>1.2.16</version>
 			</dependency>
-		
+
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>3.1.0</version>
+				<scope>provided</scope>
+			</dependency>
+			
 			<!-- spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>
