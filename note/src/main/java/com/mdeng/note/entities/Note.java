@@ -2,24 +2,34 @@ package com.mdeng.note.entities;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
 public class Note {
 
-    private long id;
+    private String id = UUID.randomUUID().toString();
+    private String pid;
     private String title;
     private List<String> tags = Lists.newArrayList();
     private Date createdTime;
     private Date modifiedTime;
     private String content;
-    
-    public long getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 
     public String getTitle() {
