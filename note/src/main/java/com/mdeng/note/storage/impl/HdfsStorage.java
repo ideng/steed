@@ -19,6 +19,14 @@ public class HdfsStorage {
     @Value("hdfs.uri")
     protected String uri;
     protected final String ROOT_PATH = "/note";
+    
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
     protected FileSystem getFS() throws IOException, URISyntaxException {
         Configuration conf = new Configuration();
