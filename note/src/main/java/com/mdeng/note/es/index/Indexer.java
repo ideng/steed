@@ -1,6 +1,8 @@
 package com.mdeng.note.es.index;
 
-public interface Indexer<T extends Indexable> {
+import com.mdeng.note.es.metadata.IMetadata;
+
+public interface Indexer<T extends IMetadata> {
 
     void index(T t);
 

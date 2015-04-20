@@ -5,8 +5,9 @@ import java.io.IOException;
 import org.elasticsearch.client.Client;
 
 import com.mdeng.note.es.NodeManager;
+import com.mdeng.note.es.metadata.IMetadata;
 
-public class IndexerImpl<T extends Indexable> implements Indexer<T> {
+public class IndexerImpl<T extends IMetadata> implements Indexer<T> {
 
     @Override
     public void index(T t) {
