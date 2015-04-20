@@ -7,7 +7,7 @@ import org.elasticsearch.client.Client;
 import com.mdeng.note.es.NodeManager;
 import com.mdeng.note.es.metadata.IMetadata;
 
-public class IndexerImpl<T extends IMetadata> implements Indexer<T> {
+public class IndexExecutorImpl<T extends IMetadata> implements IndexExecutor<T> {
 
     @Override
     public void index(T t) {
