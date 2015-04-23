@@ -13,9 +13,9 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.16</version>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.12</version>
 			</dependency>
 
 			<dependency>
@@ -24,7 +24,7 @@
 				<version>3.1.0</version>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<!-- spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -119,7 +119,7 @@
 				<artifactId>quartz-jobs</artifactId>
 				<version>2.2.1</version>
 			</dependency>
-			
+
 			<!-- utils -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
