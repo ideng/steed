@@ -166,5 +166,6 @@
 	<modules>
 		<module>quiz</module>
 		<module>common</module>
+		<module>note</module>
 	</modules>
 </project>
