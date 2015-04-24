@@ -17,35 +17,35 @@ import org.apache.http.util.Args;
  */
 public class Randoms {
 
-    /**
-     * Random select limit counts from collection
-     * 
-     * @param col
-     * @param limit
-     * @return
-     */
-    public static <E> Collection<E> rand(Collection<E> col, int limit) {
-        Args.notNull(col, "col");
-        Args.positive(limit, "limit");
-        if (col.size() == 0) return col;
+  /**
+   * Random select limit counts from collection
+   * 
+   * @param col
+   * @param limit
+   * @return
+   */
+  public static <E> Collection<E> rand(Collection<E> col, int limit) {
+    Args.notNull(col, "col");
+    Args.positive(limit, "limit");
+    if (col.size() == 0) return col;
 
-        List<E> list = new ArrayList<E>(col);
-        Collections.shuffle(list);
+    List<E> list = new ArrayList<E>(col);
+    Collections.shuffle(list);
 
-        Collection<E> ret;
-        if (col instanceof List) {
-            ret = new ArrayList<E>(limit);
-        } else if (col instanceof Set) {
-            ret = new HashSet<E>(limit);
-        } else {
-            throw new IllegalArgumentException("unsupported collection");
-        }
-
-        for (E e : list) {
-            ret.add(e);
-            if (ret.size() >= limit) break;
-        }
-
-        return ret;
+    Collection<E> ret;
+    if (col instanceof List) {
+      ret = new ArrayList<E>(limit);
+    } else if (col instanceof Set) {
+      ret = new HashSet<E>(limit);
+    } else {
+      throw new IllegalArgumentException("unsupported collection");
     }
+
+    for (E e : list) {
+      ret.add(e);
+      if (ret.size() >= limit) break;
+    }
+
+    return ret;
+  }
 }
