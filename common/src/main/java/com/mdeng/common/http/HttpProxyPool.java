@@ -1,13 +1,23 @@
 package com.mdeng.common.http;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpHost;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Simple HTTP proxy pool
+ * 
+ * @author Administrator
+ *
+ */
 public class HttpProxyPool {
   private static final int DEFAULT_POOL_SIZE = 100;
   private static final String CHECK_PROXY_URL = "http://www.baidu.com/";
@@ -18,9 +28,14 @@ public class HttpProxyPool {
   private static List<HttpHost> pool = Lists.newArrayList();
   private ProxyProvider provider;
 
-  public HttpProxyPool() {
-    init();
-    monitor();
+  public HttpProxyPool() {}
+
+  public HttpProxyPool(ProxyProvider provider) {
+    if (provider != null) {
+      this.provider = provider;
+      init();
+      monitor();
+    }
   }
 
   private void monitor() {
@@ -28,12 +43,22 @@ public class HttpProxyPool {
 
       @Override
       public void run() {
-        for (HttpHost httpHost : pool) {
-          if (!checkProxy(httpHost)) {
-
+        Iterator<HttpHost> iterator = pool.iterator();
+        while (iterator.hasNext()) {
+          HttpHost host = iterator.next();
+          if (!checkProxy(host)) {
+            iterator.remove();
           }
         }
 
+        if (pool.size() < DEFAULT_POOL_SIZE) {
+          List<HttpHost> hosts = provider.getProxies(DEFAULT_POOL_SIZE - pool.size());
+          for (HttpHost host : hosts) {
+            if (!pool.contains(host)) {
+              pool.add(host);
+            }
+          }
+        }
       }
     }, 60, TimeUnit.SECONDS);
 
@@ -50,13 +75,19 @@ public class HttpProxyPool {
 
   public HttpHost getProxy() {
     if (pool.size() > 0) {
-      // random a proxy
-
+      // randomly return a proxy
+      return pool.get(new Random().nextInt(pool.size()));
     }
     return null;
   }
 
-  public boolean checkProxy(HttpHost proxy) {
-    return false;
+  public static boolean checkProxy(HttpHost proxy) {
+    if (proxy == null) return false;
+
+    RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
+    StatusLine sl =
+        HttpRequestBuilder.create().get(CHECK_PROXY_URL).config(config)
+            .execute(new HttpRequestBuilder.StatusLineHandler());
+    return sl != null && sl.getStatusCode() == 200;
   }
 }
