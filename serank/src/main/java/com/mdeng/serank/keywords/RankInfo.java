@@ -1,4 +1,4 @@
-package com.mdeng.serank;
+package com.mdeng.serank.keywords;
 
 public class RankInfo {
   private String host;

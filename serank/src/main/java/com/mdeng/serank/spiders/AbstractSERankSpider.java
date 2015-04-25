@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.mdeng.serank.KeywordRank;
-import com.mdeng.serank.RankInfo;
 import com.mdeng.serank.SEType;
+import com.mdeng.serank.keywords.KeywordRank;
+import com.mdeng.serank.keywords.KeywordRankConsumer;
+import com.mdeng.serank.keywords.RankInfo;
 
 /**
  * Abstract spider for keyword rank in search engine.
@@ -31,6 +32,8 @@ public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>
    * Max grab times for each keyword
    */
   protected int retries = 3;
+
+  protected KeywordRankConsumer keywordRankConsumer;
 
   public AbstractSERankSpider() {}
 
@@ -57,6 +60,10 @@ public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>
           kr = grab(kr);
         }
         logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
+
+        if (keywordRankConsumer != null) {
+          keywordRankConsumer.consume(kr);
+        }
       }
 
       progress = (i + 1) / krs.size();
@@ -78,6 +85,14 @@ public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>
     }
 
     return keyword;
+  }
+
+  public KeywordRankConsumer getKeywordRankConsumer() {
+    return keywordRankConsumer;
+  }
+
+  public void setKeywordRankConsumer(KeywordRankConsumer keywordRankConsumer) {
+    this.keywordRankConsumer = keywordRankConsumer;
   }
 
   /**
