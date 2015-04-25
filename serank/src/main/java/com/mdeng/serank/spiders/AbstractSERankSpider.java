@@ -9,8 +9,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mdeng.serank.KeywordRank;
+import com.mdeng.serank.RankInfo;
 import com.mdeng.serank.SEType;
 
+/**
+ * Abstract spider for keyword rank in search engine.
+ * 
+ * @author Administrator
+ *
+ */
 public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>> {
 
   protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -30,8 +37,6 @@ public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>
   public AbstractSERankSpider(List<KeywordRank> krs) {
     this.krs = krs;
   }
-
-  protected abstract KeywordRank grab(KeywordRank keyword);
 
   protected abstract SEType getSEType();
 
@@ -62,4 +67,32 @@ public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>
   public final float getProgess() {
     return progress;
   }
+
+  protected KeywordRank grab(KeywordRank keyword) {
+    List<String> divs = getWebPagesContent(keyword.getKeyword());
+    for (String div : divs) {
+      RankInfo ri = extractRank(div);
+      if (ri != null) {
+        keyword.addRankInfo(ri);
+      }
+    }
+
+    return keyword;
+  }
+
+  /**
+   * Extract a rank information
+   * 
+   * @param div
+   * @return
+   */
+  protected abstract RankInfo extractRank(String div);
+
+  /**
+   * Get html div tags for keyword.
+   * 
+   * @param keyword
+   * @return
+   */
+  protected abstract List<String> getWebPagesContent(String keyword);
 }
