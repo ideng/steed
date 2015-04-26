@@ -1,4 +1,6 @@
-package com.mdeng.serank.keywords;
+package com.mdeng.serank.keyword.providers;
+
+import com.mdeng.serank.keyword.KeywordRank;
 
 public interface KeywordProvider {
 

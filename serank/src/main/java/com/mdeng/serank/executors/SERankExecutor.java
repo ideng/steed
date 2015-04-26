@@ -1,27 +1,37 @@
 package com.mdeng.serank.executors;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.mdeng.serank.keywords.KeywordProvider;
-import com.mdeng.serank.keywords.KeywordRank;
+import com.mdeng.serank.spiders.AbstractSERankSpider;
 
+/**
+ * Rank executor using multi-thread.
+ * 
+ * @author Administrator
+ *
+ */
 public class SERankExecutor {
-  private KeywordProvider keywordProvider;
+  private static final int THREAD_COUNT = 5;
+  private List<AbstractSERankSpider> spiders;
 
-  public KeywordProvider getKeywordProvider() {
-    return keywordProvider;
+  public List<AbstractSERankSpider> getSpiders() {
+    return spiders;
   }
 
-  public void setKeywordProvider(KeywordProvider keywordProvider) {
-    this.keywordProvider = keywordProvider;
+  public void setSpiders(List<AbstractSERankSpider> spiders) {
+    this.spiders = spiders;
   }
 
   public void execute() {
+    if (spiders == null) return;
+
     ExecutorService es = Executors.newCachedThreadPool();
-    while (keywordProvider.hasNext()) {
-      KeywordRank kr = keywordProvider.next();
-      // es.submit(task);
+    for (AbstractSERankSpider spider : spiders) {
+      for (int i = 0; i < THREAD_COUNT; i++) {
+        es.submit(spider);
+      }
     }
 
     es.shutdown();

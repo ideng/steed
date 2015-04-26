@@ -1,17 +1,16 @@
 package com.mdeng.serank.spiders;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.mdeng.serank.SEType;
-import com.mdeng.serank.keywords.KeywordRank;
-import com.mdeng.serank.keywords.KeywordRankConsumer;
-import com.mdeng.serank.keywords.RankInfo;
+import com.mdeng.serank.keyword.KeywordRank;
+import com.mdeng.serank.keyword.Rank;
+import com.mdeng.serank.keyword.consumers.KeywordRankConsumer;
+import com.mdeng.serank.keyword.providers.KeywordProvider;
 
 /**
  * Abstract spider for keyword rank in search engine.
@@ -19,34 +18,29 @@ import com.mdeng.serank.keywords.RankInfo;
  * @author Administrator
  *
  */
-public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>> {
+public abstract class AbstractSERankSpider implements Runnable {
 
   protected Logger logger = LoggerFactory.getLogger(this.getClass());
-  protected List<KeywordRank> krs = Lists.newArrayList();
-  /**
-   * Completed number of keywords / total number of keywords
-   */
-  protected float progress;
 
   /**
    * Max grab times for each keyword
    */
   protected int retries = 3;
 
+  protected KeywordProvider keywordProvider;
   protected KeywordRankConsumer keywordRankConsumer;
-
-  public AbstractSERankSpider() {}
-
-  public AbstractSERankSpider(List<KeywordRank> krs) {
-    this.krs = krs;
-  }
 
   protected abstract SEType getSEType();
 
   @Override
-  public List<KeywordRank> call() throws Exception {
-    for (int i = 0; i < krs.size(); i++) {
-      KeywordRank kr = krs.get(i);
+  public void run() {
+    if (keywordProvider == null) {
+      logger.error("keyword provider null");
+      return;
+    }
+
+    while (keywordProvider.hasNext()) {
+      KeywordRank kr = keywordProvider.next();
       if (kr == null) {
         logger.warn("input Keyword rank null");
       } else {
@@ -65,20 +59,13 @@ public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>
           keywordRankConsumer.consume(kr);
         }
       }
-
-      progress = (i + 1) / krs.size();
     }
-    return krs;
-  }
-
-  public final float getProgess() {
-    return progress;
   }
 
   protected KeywordRank grab(KeywordRank keyword) {
     List<String> divs = getWebPagesContent(keyword.getKeyword());
     for (String div : divs) {
-      RankInfo ri = extractRank(div);
+      Rank ri = extractRank(div);
       if (ri != null) {
         keyword.addRankInfo(ri);
       }
@@ -95,13 +82,21 @@ public abstract class AbstractSERankSpider implements Callable<List<KeywordRank>
     this.keywordRankConsumer = keywordRankConsumer;
   }
 
+  public KeywordProvider getKeywordProvider() {
+    return keywordProvider;
+  }
+
+  public void setKeywordProvider(KeywordProvider keywordProvider) {
+    this.keywordProvider = keywordProvider;
+  }
+
   /**
    * Extract a rank information
    * 
    * @param div
    * @return
    */
-  protected abstract RankInfo extractRank(String div);
+  protected abstract Rank extractRank(String div);
 
   /**
    * Get html div tags for keyword.

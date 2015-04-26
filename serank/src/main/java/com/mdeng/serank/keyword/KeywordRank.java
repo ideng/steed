@@ -1,16 +1,14 @@
-package com.mdeng.serank.keywords;
+package com.mdeng.serank.keyword;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.mdeng.serank.SEType;
 import com.mdeng.serank.spiders.GrabResult;
 
 public class KeywordRank {
   private String keyword;
-  private SEType seType;
   private GrabResult result = GrabResult.EMPTY_PAGE;
-  private List<RankInfo> rankInfos = Lists.newArrayList();
+  private List<Rank> rankInfos = Lists.newArrayList();
 
   public String getKeyword() {
     return keyword;
@@ -18,14 +16,6 @@ public class KeywordRank {
 
   public void setKeyword(String keyword) {
     this.keyword = keyword;
-  }
-
-  public SEType getSeType() {
-    return seType;
-  }
-
-  public void setSeType(SEType seType) {
-    this.seType = seType;
   }
 
   public GrabResult getResult() {
@@ -36,15 +26,15 @@ public class KeywordRank {
     this.result = result;
   }
 
-  public List<RankInfo> getRankInfos() {
+  public List<Rank> getRankInfos() {
     return rankInfos;
   }
 
-  public void setRankInfos(List<RankInfo> rankInfos) {
+  public void setRankInfos(List<Rank> rankInfos) {
     this.rankInfos = rankInfos;
   }
 
-  public void addRankInfo(RankInfo rInfo) {
+  public void addRankInfo(Rank rInfo) {
     this.rankInfos.add(rInfo);
   }
 }

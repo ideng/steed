@@ -1,8 +1,7 @@
-package com.mdeng.serank.keywords;
+package com.mdeng.serank.keyword;
 
-public class RankInfo {
+public class Rank {
   private String host;
-  private String address;
   private int rank;
 
   public String getHost() {
@@ -11,14 +10,6 @@ public class RankInfo {
 
   public void setHost(String host) {
     this.host = host;
-  }
-
-  public String getAddress() {
-    return address;
-  }
-
-  public void setAddress(String address) {
-    this.address = address;
   }
 
   public int getRank() {
