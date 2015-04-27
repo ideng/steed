@@ -3,7 +3,7 @@ package com.mdeng.serank.keyword;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.mdeng.serank.spiders.GrabResult;
+import com.mdeng.serank.spider.GrabResult;
 
 public class KeywordRank {
   private String keyword;
