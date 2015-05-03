@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
+
 /**
  * Regex helper for SERank
  * 
@@ -32,6 +34,20 @@ public class SERankRegex {
     if (matcher.find()) {
       return matcher.group(group);
     }
+
+    return "";
+  }
+  
+  public String matchNonEmptyValue(String content, String regex) {
+    Matcher matcher =
+        Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(content);
+
+    while (matcher.find()) {
+      String g= matcher.group();
+      if (!Strings.isNullOrEmpty(g)) {
+          return g;
+      }
+  }
 
     return "";
   }

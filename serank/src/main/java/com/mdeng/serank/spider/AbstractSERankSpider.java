@@ -2,10 +2,12 @@ package com.mdeng.serank.spider;
 
 import java.util.List;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.mdeng.serank.SERankRegex;
 import com.mdeng.serank.SEType;
 import com.mdeng.serank.keyword.KeywordRank;
 import com.mdeng.serank.keyword.Rank;
@@ -26,7 +28,7 @@ public abstract class AbstractSERankSpider implements Runnable {
    * Max grab times for each keyword
    */
   protected int retries = 3;
-
+  protected SERankRegex serRegex = new SERankRegex();
   protected KeywordProvider keywordProvider;
   protected KeywordRankConsumer keywordRankConsumer;
 
@@ -63,7 +65,20 @@ public abstract class AbstractSERankSpider implements Runnable {
   }
 
   protected KeywordRank grab(KeywordRank keyword) {
-    List<String> divs = getWebPagesContent(keyword.getKeyword());
+    String url = getUrl(keyword.getKeyword());
+    String content = getPageContent(url);
+    
+    if (Strings.isNullOrEmpty(content)) {
+      keyword.setResult(GrabResult.EMPTY_PAGE);
+      return keyword;
+    }
+    
+    List<String> divs = getDivs(content);
+    if (divs == null || divs.size() == 0) {
+      keyword.setResult(GrabResult.EMPTY_FIELD);
+      return keyword;
+    }
+    
     for (String div : divs) {
       Rank ri = extractRank(div);
       if (ri != null) {
@@ -74,6 +89,11 @@ public abstract class AbstractSERankSpider implements Runnable {
     return keyword;
   }
 
+  protected String getPageContent(String url) {
+    //TODO:...
+    return null;
+  }
+  
   public KeywordRankConsumer getKeywordRankConsumer() {
     return keywordRankConsumer;
   }
@@ -90,6 +110,8 @@ public abstract class AbstractSERankSpider implements Runnable {
     this.keywordProvider = keywordProvider;
   }
 
+  protected abstract String getUrl(String keyword);
+  
   /**
    * Extract a rank information
    * 
@@ -104,5 +126,5 @@ public abstract class AbstractSERankSpider implements Runnable {
    * @param keyword
    * @return
    */
-  protected abstract List<String> getWebPagesContent(String keyword);
+  protected abstract List<String> getDivs(String keyword);
 }
