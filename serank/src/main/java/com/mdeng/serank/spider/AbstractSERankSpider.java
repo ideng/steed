@@ -1,8 +1,8 @@
 package com.mdeng.serank.spider;
 
+import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,18 +67,18 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected KeywordRank grab(KeywordRank keyword) {
     String url = getUrl(keyword.getKeyword());
     String content = getPageContent(url);
-    
+
     if (Strings.isNullOrEmpty(content)) {
       keyword.setResult(GrabResult.EMPTY_PAGE);
       return keyword;
     }
-    
+
     List<String> divs = getDivs(content);
     if (divs == null || divs.size() == 0) {
       keyword.setResult(GrabResult.EMPTY_FIELD);
       return keyword;
     }
-    
+
     for (String div : divs) {
       Rank ri = extractRank(div);
       if (ri != null) {
@@ -90,10 +90,10 @@ public abstract class AbstractSERankSpider implements Runnable {
   }
 
   protected String getPageContent(String url) {
-    //TODO:...
+    // TODO:...
     return null;
   }
-  
+
   public KeywordRankConsumer getKeywordRankConsumer() {
     return keywordRankConsumer;
   }
@@ -111,7 +111,7 @@ public abstract class AbstractSERankSpider implements Runnable {
   }
 
   protected abstract String getUrl(String keyword);
-  
+
   /**
    * Extract a rank information
    * 
@@ -127,4 +127,37 @@ public abstract class AbstractSERankSpider implements Runnable {
    * @return
    */
   protected abstract List<String> getDivs(String keyword);
+
+  protected String getMainHost(String url) {
+    if (url.indexOf("...") >= 0) {
+      url = serRegex.matchNthValue(url, "(.*?)\\.\\.\\.", 1);
+    }
+
+    if (url.indexOf("http://") < 0) {
+      url = "http://" + url;
+    }
+
+    String host = "";
+    try {
+      URL ui = new URL(url);
+      String tempHost = ui.getHost();
+      if (!Strings.isNullOrEmpty(tempHost)) {
+        String[] splits = tempHost.split("\\.");
+        int len = splits.length;
+        if (len < 2) {
+          host = splits[0];
+        } else if (tempHost.indexOf(".com.cn") >= 0 || tempHost.indexOf(".net.cn") >= 0
+            || tempHost.indexOf(".org.cn") >= 0 || tempHost.indexOf(".gov.cn") >= 0
+            || tempHost.indexOf(".cn.com") >= 0) {
+          host = splits[len - 3] + "." + splits[len - 2] + "." + splits[len - 1];
+        } else {
+          host = splits[len - 2] + "." + splits[len - 1];
+        }
+      }
+    } catch (Throwable t) {
+      logger.error("HOST解析出错：" + url, t);
+    }
+
+    return host;
+  }
 }

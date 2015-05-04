@@ -3,9 +3,8 @@ package com.mdeng.serank.spider;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Strings;
+import com.mdeng.common.utils.Charsets;
 import com.mdeng.serank.SEType;
 import com.mdeng.serank.keyword.Rank;
 
@@ -27,23 +26,26 @@ public class BaiduRankSpider extends AbstractSERankSpider {
     String regTop = " id=\"(\\d+)\" ";
     String top = serRegex.matchNthValue(div, regTop, 1);
     if (Strings.isNullOrEmpty(top) || Strings.isNullOrEmpty(top.trim())) return null;
-    
+
     List<String> regUrls = new ArrayList<String>();
     regUrls.add("<span\\s*class\\s*=\\s*\"g\">(.*?)(&nbsp;)?\\S*?(&nbsp;)?</span>"); // 普通列表
     regUrls.add("<span\\s*class\\s*=\\s*\"c\\-showurl\">(.*?)&nbsp;\\S*?&nbsp;</span>"); // 百度百科
     regUrls.add("<span\\s*class\\s*=\\s*\"c\\-showurl\">(.*?) *?\\S*? *?</span>"); // 其他
     regUrls.add("<span\\s*class\\s*=\\s*\"c\\-showurl\"> *?(\\S*?) *?</span>"); // 其他
-    
+
     String url = null;
     for (String regUrl : regUrls) {
-        // 空字符串也可能匹配，选取匹配的非空串
-        url = serRegex.matchNonEmptyValue(div, regUrl);
-        if (!Strings.isNullOrEmpty(url)) {
-            break;
-        }
+      // 空字符串也可能匹配，选取匹配的非空串
+      url = serRegex.matchNonEmptyValue(div, regUrl);
+      if (!Strings.isNullOrEmpty(url)) {
+        break;
+      }
     }
-    
-    
+
+    Rank rank = new Rank();
+    rank.setRank(Integer.valueOf(top));
+    rank.setHost(getMainHost(Charsets.removeHtml(url)));
+    return rank;
   }
 
   @Override
