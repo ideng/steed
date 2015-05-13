@@ -3,10 +3,15 @@ package com.mdeng.serank.spider;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.mdeng.common.http.BasicProxyProvider;
+import com.mdeng.common.http.HttpProxyPool;
+import com.mdeng.common.http.HttpRequestBuilder;
 import com.mdeng.serank.SERankRegex;
 import com.mdeng.serank.SEType;
 import com.mdeng.serank.keyword.KeywordRank;
@@ -31,7 +36,7 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected SERankRegex serRegex = new SERankRegex();
   protected KeywordProvider keywordProvider;
   protected KeywordRankConsumer keywordRankConsumer;
-
+  //protected static HttpProxyPool pool = new HttpProxyPool(new BasicProxyProvider());
   protected abstract SEType getSEType();
 
   @Override
@@ -56,7 +61,7 @@ public abstract class AbstractSERankSpider implements Runnable {
           kr = grab(kr);
         }
         logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
-
+        //System.out.println("Result for keyword {}:{}"+ kr.getKeyword()+" "+ kr.getResult());
         if (keywordRankConsumer != null) {
           keywordRankConsumer.consume(kr);
         }
@@ -86,12 +91,17 @@ public abstract class AbstractSERankSpider implements Runnable {
       }
     }
 
+    keyword.setResult(GrabResult.SUCCESS);
     return keyword;
   }
 
   protected String getPageContent(String url) {
     // TODO:...
-    return null;
+    String content = HttpRequestBuilder.create().get(url).execute(new HttpRequestBuilder.StringEntityHandler());
+//    HttpHost host = pool.getProxy();
+//    RequestConfig config = RequestConfig.custom().setProxy(host).build();
+//    String content = HttpRequestBuilder.create().config(config).get(url).execute(new HttpRequestBuilder.StringEntityHandler());
+    return content;
   }
 
   public KeywordRankConsumer getKeywordRankConsumer() {
