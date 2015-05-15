@@ -2,39 +2,54 @@ package com.mdeng.quiz.graph.astar;
 
 import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Stopwatch;
 
 public class Demo {
+  
+  public static void h1(Demo demo,N start, N end) {
 
-  public static void main(String[] args) {
-    Demo demo = new Demo();
-    N[][] graph = demo.init();
-    System.out.println(System.currentTimeMillis());
-    demo.astar(graph[0][3], graph[430][28],new H(){
+    Stopwatch stopwatch = new Stopwatch();
+    stopwatch.start();
+    demo.astar(start, end, new H() {
 
       @Override
       public int h(N a, N b) {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
       }
-      
+
     });
-    System.out.println(System.currentTimeMillis());
-    
-    //demo.print(graph[43][28]);
+    stopwatch.stop();
+    System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    //demo.print(end);
     demo.reset();
-    
-    System.out.println(System.currentTimeMillis());
-    demo.astar(graph[0][3], graph[430][28],new H(){
+  }
+
+  public static void h2(Demo demo,N start, N end) {
+
+    Stopwatch stopwatch = new Stopwatch();
+    stopwatch.start();
+    demo.astar(start, end, new H() {
 
       @Override
       public int h(N a, N b) {
         return 0;
       }
-      
+
     });
-    System.out.println(System.currentTimeMillis());
-    
+    stopwatch.stop();
+    System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    //demo.print(end);
+    demo.reset();
+  }
+
+  public static void main(String[] args) throws InterruptedException {
+    Demo demo = new Demo();
+    N[][] g = demo.init();
+    //h1(demo,g[0][0],g[499][499]);
+    //TimeUnit.SECONDS.sleep(5);
+    h2(demo,g[0][0],g[499][499]);
     System.exit(0);
   }
 
@@ -63,35 +78,39 @@ public class Demo {
   // }
 
   PriorityQueue<N> open = new PriorityQueue<N>();
-  int[][] dir = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-  int m = 1000;
-  N[][] graph;
+  int[][] dir = { {0, -1}, {0, 1}, {-1, 0}, {1, 0}};// up down left right
+  //int[] cost = {1, 2, 3, 4};
+  int X = 500;
+  int Y = 500;
+  N[][] v;
+  int[][] e;
 
   public void astar(N start, N end, H h) {
     open.offer(start);
     while (!open.isEmpty()) {
       N n = open.poll();
-      if (n == end) break;
+      if (n == end) {
+        break;
+      }
 
       for (int i = 0; i < dir.length; i++) {
         int x = n.x + dir[i][0];
         int y = n.y + dir[i][1];
         if (isValid(x, y)) {
-          N k = graph[x][y];
+          N k = v[x][y];
 
-          int cost = n.cost[i];
           if (k.visited)
             continue;
           else if (open.contains(k)) {
-            if (n.g + cost < k.g) {
-              k.g = n.g + cost;
+            if (n.g + n.cost[i] < k.g) {
+              k.g = n.g + n.cost[i];
               k.parent = n;
             }
           } else {
-            open.offer(k);
             k.h = h.h(k, end);
-            k.g = n.g + cost;
+            k.g = n.g + n.cost[i];
             k.parent = n;
+            open.offer(k);
           }
         }
       }
@@ -99,49 +118,50 @@ public class Demo {
     }
   }
 
-  private boolean isValid(int x,int y) {
-    return x>=0 && x<m && y>=0 && y<m;
+  private boolean isValid(int x, int y) {
+    return x >= 0 && x < X && y >= 0 && y < Y;
   }
 
   N[][] init() {
+    v = new N[X][Y];
+
     Random random = new Random();
-    graph = new N[m][m];
-    for (int i = 0; i < m; i++) {
-      for (int j = 0; j < m; j++) {
-        graph[i][j] = new N();
-        graph[i][j].x = i;
-        graph[i][j].y = j;
-        graph[i][j].cost = new int[4];
-        for (int k = 0; k < graph[i][j].cost.length; k++) {
-          int c = random.nextInt(11);
-          if (c == 0) c = 1;
-          graph[i][j].cost[k] = c;
+    for (int i = 0; i < X; i++) {
+      for (int j = 0; j < Y; j++) {
+        v[i][j] = new N();
+        v[i][j].x = i;
+        v[i][j].y = j;
+        v[i][j].cost = new int[4];
+        for (int k = 0; k < 4; k++) {
+          int r = random.nextInt(11);
+          r = r == 0 ? 1 : r;
+          v[i][j].cost[k] = r;
         }
       }
     }
-
-    return graph;
+    return v;
   }
 
   int h(N a, N b) {
-    //return 0;
+    // return 0;
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
   }
-  
+
   void print(N end) {
-    System.out.println("("+end.x+","+end.y+")" );
-    if (end.parent!=null) {
+    System.out.println("(" + end.x + "," + end.y + ")");
+    if (end.parent != null) {
       print(end.parent);
     }
   }
-  
+
   void reset() {
-    for (int i = 0; i < m; i++) {
-      for (int j = 0; j < m; j++) {
-        graph[i][j].g=0;
-        graph[i][j].h=0;
-        graph[i][j].parent=null;
-        graph[i][j].visited=false;
+    open.clear();
+    for (int i = 0; i < X; i++) {
+      for (int j = 0; j < Y; j++) {
+        v[i][j].g = 0;
+        v[i][j].h = 0;
+        v[i][j].parent = null;
+        v[i][j].visited = false;
       }
     }
   }

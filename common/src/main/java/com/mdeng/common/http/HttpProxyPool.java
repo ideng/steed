@@ -67,7 +67,7 @@ public class HttpProxyPool {
   private void init() {
     List<HttpHost> proxies = provider.getProxies(DEFAULT_POOL_SIZE);
     for (HttpHost httpHost : proxies) {
-      if (!pool.contains(httpHost) && checkProxy(httpHost)) {
+      if (!pool.contains(httpHost)) { // && checkProxy(httpHost)
         pool.add(httpHost);
       }
     }
