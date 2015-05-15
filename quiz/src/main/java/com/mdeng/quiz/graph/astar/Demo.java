@@ -10,8 +10,8 @@ public class Demo {
   
   public static void h1(Demo demo,N start, N end) {
 
-    Stopwatch stopwatch = new Stopwatch();
-    stopwatch.start();
+    //Stopwatch stopwatch = new Stopwatch();
+    //stopwatch.start();
     demo.astar(start, end, new H() {
 
       @Override
@@ -20,16 +20,17 @@ public class Demo {
       }
 
     });
-    stopwatch.stop();
-    System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    //stopwatch.stop();
+    //System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
     //demo.print(end);
+    System.out.println(demo.loopCount);
     demo.reset();
   }
 
   public static void h2(Demo demo,N start, N end) {
 
-    Stopwatch stopwatch = new Stopwatch();
-    stopwatch.start();
+    //Stopwatch stopwatch = new Stopwatch();
+    //stopwatch.start();
     demo.astar(start, end, new H() {
 
       @Override
@@ -38,53 +39,63 @@ public class Demo {
       }
 
     });
-    stopwatch.stop();
-    System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    //stopwatch.stop();
+    //System.out.println(stopwatch.elapsed(TimeUnit.MILLISECONDS));
     //demo.print(end);
+    System.out.println(demo.loopCount);
     demo.reset();
   }
 
   public static void main(String[] args) throws InterruptedException {
-    Demo demo = new Demo();
-    N[][] g = demo.init();
-    //h1(demo,g[0][0],g[499][499]);
-    //TimeUnit.SECONDS.sleep(5);
-    h2(demo,g[0][0],g[499][499]);
+    Random r = new Random();
+    for (int i = 0; i < 4; i++) {
+      Demo demo = new Demo();
+      N[][] g = demo.init();
+      int x1 = r.nextInt(10);
+      int y1 = r.nextInt(30);
+      int x2 = r.nextInt(10);
+      int y2 = r.nextInt(30);
+      System.out.println(x1+","+y1+"-->"+x2+","+y2);
+      h1(demo,g[x1][y1],g[x2][y2]);
+      h2(demo,g[x1][y1],g[x2][y2]);  
+    }
+    
     System.exit(0);
   }
 
   // astar(start, end) {
-  // OPEN <- start, CLOSED <- empty
-  // while(OPEN!=empty) {
-  // get n from OPEN with min h
-  // if(neighbor == end) break;
-  // for(neighbor in n.neighbors) {
-  // if(neighbor in CLOSED) continue;
-  // else {
-  // if(neighbor in OPEN) {
-  // if(n.g + cost(n,neighbor)<neighbor.g) {
-  // neighbor.g = n.g + cost(n,neighbor);
-  // neighbor.parent = n;
-  // }
-  // } else {
-  // OPEN <- neighbor;
-  // neighbor.h = computeH(neighbor);
-  // neighbout.g = n.g + cost(n,neighbor);
-  // neighbor.parent = n;
-  // }
-  // }
-  // }
-  // CLOSED <- n
+  //   OPEN <- start, CLOSED <- empty
+  //   while(OPEN!=empty) {
+  //     get n from OPEN which has minimum f
+  //     if(neighbor == end) break;
+  //     for(neighbor in n.neighbors) {
+  //       if(neighbor in CLOSED) continue;
+  //       else {
+  //         if(neighbor in OPEN) {
+  //           if(n.g + cost(n,neighbor)<neighbor.g) {
+  //             neighbor.g = n.g + cost(n,neighbor);
+  //             neighbor.parent = n;
+  //           }
+  //         } else {
+  //           neighbor.h = h(neighbor);
+  //           neighbout.g = n.g + cost(n,neighbor);
+  //           neighbor.parent = n;
+  //           OPEN <- neighbor; 
+  //         }
+  //       }
+  //     }
+  //     CLOSED <- n
+  //   }
   // }
 
   PriorityQueue<N> open = new PriorityQueue<N>();
   int[][] dir = { {0, -1}, {0, 1}, {-1, 0}, {1, 0}};// up down left right
   //int[] cost = {1, 2, 3, 4};
-  int X = 500;
-  int Y = 500;
+  int X = 10;
+  int Y = 30;
   N[][] v;
   int[][] e;
-
+  int loopCount;
   public void astar(N start, N end, H h) {
     open.offer(start);
     while (!open.isEmpty()) {
@@ -112,9 +123,11 @@ public class Demo {
             k.parent = n;
             open.offer(k);
           }
+          loopCount++;
         }
       }
       n.visited = true;
+      //loopCount++;
     }
   }
 
@@ -164,5 +177,6 @@ public class Demo {
         v[i][j].visited = false;
       }
     }
+    loopCount=0;
   }
 }
