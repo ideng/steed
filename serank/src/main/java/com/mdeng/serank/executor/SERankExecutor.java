@@ -5,7 +5,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.mdeng.common.utils.Stopwatch;
@@ -19,8 +23,12 @@ import com.mdeng.serank.spider.BaiduRankSpider;
  * @author Administrator
  *
  */
-public class SERankExecutor {
-  private int threadCount = 5;
+@Component
+public class SERankExecutor implements Runnable {
+  private static Logger logger = LoggerFactory.getLogger(SERankExecutor.class);
+  
+  @Value("${serank.thread.count}")
+  private int threadCount = 1;
   private List<AbstractSERankSpider> spiders;
 
   public List<AbstractSERankSpider> getSpiders() {
@@ -36,13 +44,16 @@ public class SERankExecutor {
     return threadCount;
   }
 
-  @Autowired
   public void setThreadCount(int threadCount) {
     this.threadCount = threadCount;
   }
 
   public void execute() {
-    if (spiders == null) return;
+    logger.info("se rank executor start...");
+    if (spiders == null) {
+      logger.warn("no spider configured");
+      return;
+    }
 
     ExecutorService es = Executors.newCachedThreadPool();
     for (AbstractSERankSpider spider : spiders) {
@@ -51,13 +62,6 @@ public class SERankExecutor {
       }
     }
 
-    es.shutdown();
-    try {
-      es.awaitTermination(1, TimeUnit.HOURS);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
   }
 
   public static void main(String[] args) {
@@ -91,5 +95,10 @@ public class SERankExecutor {
     watch.mark();
     System.out.println("5 thread:" + watch.getDuration(TimeUnit.SECONDS).get(0));
     System.exit(0);
+  }
+
+  @Override
+  public void run() {
+    execute();
   }
 }

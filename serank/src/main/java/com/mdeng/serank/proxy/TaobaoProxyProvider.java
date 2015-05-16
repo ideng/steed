@@ -8,11 +8,13 @@ import java.util.List;
 import org.apache.http.HttpHost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mdeng.common.http.HttpRequestBuilder;
 
+@Component
 public class TaobaoProxyProvider implements ProxyProvider {
 
   private static Logger logger = LoggerFactory.getLogger(TaobaoProxyProvider.class);

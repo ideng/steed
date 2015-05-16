@@ -3,6 +3,8 @@ package com.mdeng.serank.spider;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.google.common.base.Strings;
 import com.mdeng.common.utils.Charsets;
 import com.mdeng.serank.SEType;
@@ -14,6 +16,7 @@ import com.mdeng.serank.keyword.Rank;
  * @author hui.deng
  *
  */
+@Component
 public class BaiduRankSpider extends AbstractSERankSpider {
 
   @Override

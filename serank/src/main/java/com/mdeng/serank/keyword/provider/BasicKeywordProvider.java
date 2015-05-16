@@ -1,7 +1,10 @@
 package com.mdeng.serank.keyword.provider;
 
+import org.springframework.stereotype.Component;
+
 import com.mdeng.serank.keyword.KeywordRank;
 
+@Component
 public class BasicKeywordProvider implements KeywordProvider {
   private String[] keywords={"农作物价格",
                              "农作物买卖市场",

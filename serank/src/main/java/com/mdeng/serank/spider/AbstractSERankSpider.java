@@ -8,6 +8,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Strings;
 import com.mdeng.common.http.HttpRequestBuilder;
@@ -37,11 +38,11 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected SERankRegex serRegex = new SERankRegex();
   @Autowired
   protected KeywordProvider keywordProvider;
-  @Autowired
+  @Autowired(required=false)
   protected KeywordRankConsumer keywordRankConsumer;
   @Autowired
   protected HttpProxyPool pool;
-  @Autowired
+  @Value("${serank.proxy.enabled}")
   protected boolean proxyEnabled = true;
 
   protected abstract SEType getSEType();

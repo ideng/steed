@@ -10,6 +10,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.mdeng.common.http.HttpRequestBuilder;
@@ -20,6 +21,7 @@ import com.mdeng.common.http.HttpRequestBuilder;
  * @author Administrator
  *
  */
+@Component
 public class HttpProxyPool {
   private static final int DEFAULT_POOL_SIZE = 100;
   private static final String CHECK_PROXY_URL = "http://www.baidu.com/";
