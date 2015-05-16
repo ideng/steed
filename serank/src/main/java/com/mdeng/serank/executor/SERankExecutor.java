@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.common.collect.Lists;
 import com.mdeng.common.utils.Stopwatch;
 import com.mdeng.serank.keyword.provider.BasicKeywordProvider;
@@ -25,6 +27,7 @@ public class SERankExecutor {
     return spiders;
   }
 
+  @Autowired
   public void setSpiders(List<AbstractSERankSpider> spiders) {
     this.spiders = spiders;
   }
@@ -33,6 +36,7 @@ public class SERankExecutor {
     return threadCount;
   }
 
+  @Autowired
   public void setThreadCount(int threadCount) {
     this.threadCount = threadCount;
   }
@@ -55,7 +59,7 @@ public class SERankExecutor {
       e.printStackTrace();
     }
   }
-  
+
   public static void main(String[] args) {
     SERankExecutor executor = new SERankExecutor();
     List<AbstractSERankSpider> lst = Lists.newArrayList();
@@ -63,29 +67,29 @@ public class SERankExecutor {
     spider.setKeywordProvider(new BasicKeywordProvider());
     lst.add(spider);
     executor.setSpiders(lst);
-    
+
     Stopwatch watch = new Stopwatch();
     executor.setThreadCount(1);
     watch.start();
     executor.execute();
     watch.mark();
-    System.out.println("1 thread:"+watch.getDuration(TimeUnit.SECONDS).get(0));
-    
+    System.out.println("1 thread:" + watch.getDuration(TimeUnit.SECONDS).get(0));
+
     spider.setKeywordProvider(new BasicKeywordProvider());
     watch = new Stopwatch();
     executor.setThreadCount(3);
     watch.start();
     executor.execute();
     watch.mark();
-    System.out.println("3 thread:"+watch.getDuration(TimeUnit.SECONDS).get(0));
-    
+    System.out.println("3 thread:" + watch.getDuration(TimeUnit.SECONDS).get(0));
+
     spider.setKeywordProvider(new BasicKeywordProvider());
     watch = new Stopwatch();
     executor.setThreadCount(5);
     watch.start();
     executor.execute();
     watch.mark();
-    System.out.println("5 thread:"+watch.getDuration(TimeUnit.SECONDS).get(0));
+    System.out.println("5 thread:" + watch.getDuration(TimeUnit.SECONDS).get(0));
     System.exit(0);
   }
 }

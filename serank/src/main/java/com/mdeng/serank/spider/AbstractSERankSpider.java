@@ -7,17 +7,18 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Strings;
-import com.mdeng.common.http.BasicProxyProvider;
-import com.mdeng.common.http.HttpProxyPool;
 import com.mdeng.common.http.HttpRequestBuilder;
+import com.mdeng.common.http.HttpRequestBuilder.StringEntityHandler;
 import com.mdeng.serank.SERankRegex;
 import com.mdeng.serank.SEType;
 import com.mdeng.serank.keyword.KeywordRank;
 import com.mdeng.serank.keyword.Rank;
 import com.mdeng.serank.keyword.consumer.KeywordRankConsumer;
 import com.mdeng.serank.keyword.provider.KeywordProvider;
+import com.mdeng.serank.proxy.HttpProxyPool;
 
 /**
  * Abstract spider for keyword rank in search engine.
@@ -34,9 +35,15 @@ public abstract class AbstractSERankSpider implements Runnable {
    */
   protected int retries = 3;
   protected SERankRegex serRegex = new SERankRegex();
+  @Autowired
   protected KeywordProvider keywordProvider;
+  @Autowired
   protected KeywordRankConsumer keywordRankConsumer;
-  //protected static HttpProxyPool pool = new HttpProxyPool(new BasicProxyProvider());
+  @Autowired
+  protected HttpProxyPool pool;
+  @Autowired
+  protected boolean proxyEnabled = true;
+
   protected abstract SEType getSEType();
 
   @Override
@@ -61,7 +68,7 @@ public abstract class AbstractSERankSpider implements Runnable {
           kr = grab(kr);
         }
         logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
-        //System.out.println("Result for keyword {}:{}"+ kr.getKeyword()+" "+ kr.getResult());
+        // System.out.println("Result for keyword {}:{}"+ kr.getKeyword()+" "+ kr.getResult());
         if (keywordRankConsumer != null) {
           keywordRankConsumer.consume(kr);
         }
@@ -96,11 +103,17 @@ public abstract class AbstractSERankSpider implements Runnable {
   }
 
   protected String getPageContent(String url) {
-    // TODO:...
-    String content = HttpRequestBuilder.create().get(url).execute(new HttpRequestBuilder.StringEntityHandler());
-//    HttpHost host = pool.getProxy();
-//    RequestConfig config = RequestConfig.custom().setProxy(host).build();
-//    String content = HttpRequestBuilder.create().config(config).get(url).execute(new HttpRequestBuilder.StringEntityHandler());
+    String content = null;
+    HttpRequestBuilder builder = HttpRequestBuilder.create().get(url);
+    StringEntityHandler handler = new StringEntityHandler();
+    if (!proxyEnabled) {
+      content = builder.execute(handler);
+    } else {
+      HttpHost host = pool.getProxy();
+      RequestConfig config = RequestConfig.custom().setProxy(host).build();
+      content = builder.config(config).execute(handler);
+    }
+
     return content;
   }
 
@@ -118,6 +131,14 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   public void setKeywordProvider(KeywordProvider keywordProvider) {
     this.keywordProvider = keywordProvider;
+  }
+
+  public boolean isProxyEnabled() {
+    return proxyEnabled;
+  }
+
+  public void setProxyEnabled(boolean proxyEnabled) {
+    this.proxyEnabled = proxyEnabled;
   }
 
   protected abstract String getUrl(String keyword);
@@ -165,7 +186,7 @@ public abstract class AbstractSERankSpider implements Runnable {
         }
       }
     } catch (Throwable t) {
-      logger.error("HOST解析出错：" + url, t);
+      logger.error("Failed to parse host from {}:{}", url, t.getMessage());
     }
 
     return host;

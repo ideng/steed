@@ -1,4 +1,4 @@
-package com.mdeng.common.http;
+package com.mdeng.serank.proxy;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,8 +9,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpHost;
 import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
+import com.mdeng.common.http.HttpRequestBuilder;
 
 /**
  * Simple HTTP proxy pool
@@ -25,11 +27,12 @@ public class HttpProxyPool {
   /**
    * Proxy can be shared in multiple HTTP requests
    */
-  private static List<HttpHost> pool = Lists.newArrayList();
+  private List<HttpHost> pool = Lists.newArrayList();
   private ProxyProvider provider;
 
   public HttpProxyPool() {}
 
+  @Autowired
   public HttpProxyPool(ProxyProvider provider) {
     if (provider != null) {
       this.provider = provider;
@@ -81,7 +84,7 @@ public class HttpProxyPool {
     return null;
   }
 
-  public static boolean checkProxy(HttpHost proxy) {
+  public boolean checkProxy(HttpHost proxy) {
     if (proxy == null) return false;
 
     RequestConfig config = RequestConfig.custom().setProxy(proxy).build();

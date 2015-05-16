@@ -1,4 +1,4 @@
-package com.mdeng.common.http;
+package com.mdeng.serank.proxy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,11 +6,16 @@ import java.io.StringReader;
 import java.util.List;
 
 import org.apache.http.HttpHost;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.mdeng.common.http.HttpRequestBuilder;
 
-public class BasicProxyProvider implements ProxyProvider {
+public class TaobaoProxyProvider implements ProxyProvider {
+
+  private static Logger logger = LoggerFactory.getLogger(TaobaoProxyProvider.class);
 
   private static final String urlTemplate =
       "http://115.29.136.51/get.php?tid=A3969657691719&num=%d";
@@ -27,24 +32,19 @@ public class BasicProxyProvider implements ProxyProvider {
     String line = null;
     try {
       while ((line = bufferedReader.readLine()) != null) {
-        try {
-          String[] splits = line.split(":");
-          if (splits.length != 2) {
-            continue;
-          } else if (Strings.isNullOrEmpty(splits[0]) || Strings.isNullOrEmpty(splits[0].trim())
-              || Strings.isNullOrEmpty(splits[1]) || Strings.isNullOrEmpty(splits[1].trim())) {
-            continue;
-          }
-
-          HttpHost httpHost = new HttpHost(splits[0].trim(), Integer.parseInt(splits[1]));
-          ret.add(httpHost);
-        } catch (Exception e) {
-          e.printStackTrace();
+        String[] splits = line.split(":");
+        if (splits.length != 2) {
+          continue;
+        } else if (Strings.isNullOrEmpty(splits[0]) || Strings.isNullOrEmpty(splits[0].trim())
+            || Strings.isNullOrEmpty(splits[1]) || Strings.isNullOrEmpty(splits[1].trim())) {
+          continue;
         }
+
+        HttpHost httpHost = new HttpHost(splits[0].trim(), Integer.parseInt(splits[1]));
+        ret.add(httpHost);
       }
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Failed to parse proxy: {}", e.getMessage());
     }
 
     return ret;
