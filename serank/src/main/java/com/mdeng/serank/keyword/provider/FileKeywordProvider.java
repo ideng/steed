@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.mdeng.serank.keyword.KeywordRank;
 
 @Component
-public class BasicKeywordProvider implements KeywordProvider {
+public class FileKeywordProvider implements KeywordProvider {
   private String[] keywords={"农作物价格",
                              "农作物买卖市场",
                              "有机农作物批发",

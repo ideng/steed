@@ -105,6 +105,7 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   protected String getPageContent(String url) {
     String content = null;
+    //TODO: time out setting
     HttpRequestBuilder builder = HttpRequestBuilder.create().get(url);
     StringEntityHandler handler = new StringEntityHandler();
     if (!proxyEnabled) {

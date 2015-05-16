@@ -12,12 +12,12 @@ import com.mdeng.serank.executor.StrategyExecutor;
  */
 public class SERankApplication {
 
+  @SuppressWarnings("resource")
   public static void main(String[] args) {
     AnnotationConfigApplicationContext context = null;
     context = new AnnotationConfigApplicationContext(SERankConfig.class);
     StrategyExecutor executor = context.getBean(StrategyExecutor.class);
     executor.execute();
-    context.close();
   }
 
 }
