@@ -38,12 +38,12 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected SERankRegex serRegex = new SERankRegex();
   @Autowired
   protected KeywordProvider keywordProvider;
-  @Autowired(required=false)
+  @Autowired(required = false)
   protected KeywordRankConsumer keywordRankConsumer;
   @Autowired
   protected HttpProxyPool pool;
   @Value("${serank.proxy.enabled}")
-  protected boolean proxyEnabled = true;
+  protected boolean proxyEnabled;
 
   protected abstract SEType getSEType();
 
@@ -69,8 +69,7 @@ public abstract class AbstractSERankSpider implements Runnable {
           kr = grab(kr);
         }
         logger.info("Result for keyword {}:{}", kr.getKeyword(), kr.getResult());
-        // System.out.println("Result for keyword {}:{}"+ kr.getKeyword()+" "+ kr.getResult());
-        if (keywordRankConsumer != null) {
+        if (keywordRankConsumer != null && kr.getResult() == GrabResult.SUCCESS) {
           keywordRankConsumer.consume(kr);
         }
       }
@@ -105,7 +104,7 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   protected String getPageContent(String url) {
     String content = null;
-    //TODO: time out setting
+    // TODO: time out setting
     HttpRequestBuilder builder = HttpRequestBuilder.create().get(url);
     StringEntityHandler handler = new StringEntityHandler();
     if (!proxyEnabled) {
