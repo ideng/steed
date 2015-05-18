@@ -6,9 +6,18 @@ import com.google.common.collect.Lists;
 import com.mdeng.serank.spider.GrabResult;
 
 public class KeywordRank {
+  private int group;
   private String keyword;
   private GrabResult result = GrabResult.EMPTY_PAGE;
   private List<Rank> rankInfos = Lists.newArrayList();
+
+  public int getGroup() {
+    return group;
+  }
+
+  public void setGroup(int group) {
+    this.group = group;
+  }
 
   public String getKeyword() {
     return keyword;

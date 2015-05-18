@@ -265,7 +265,7 @@ public class FileKeywordProvider implements KeywordProvider {
   }
 
   @Override
-  public synchronized KeywordRank next() {
+  public synchronized KeywordRank nextKeyword() {
     // TODO Auto-generated method stub
     KeywordRank kr = new KeywordRank();
     kr.setKeyword(keywords[index++]);

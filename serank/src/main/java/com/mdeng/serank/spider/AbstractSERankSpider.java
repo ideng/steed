@@ -55,7 +55,7 @@ public abstract class AbstractSERankSpider implements Runnable {
     }
 
     while (keywordProvider.hasNext()) {
-      KeywordRank kr = keywordProvider.next();
+      KeywordRank kr = keywordProvider.nextKeyword();
       if (kr == null) {
         logger.warn("input Keyword rank null");
       } else {

@@ -2,19 +2,29 @@ package com.mdeng.serank.keyword.provider;
 
 import com.mdeng.serank.keyword.KeywordRank;
 
+/**
+ * Keyword is grouped
+ * 
+ * @author Administrator
+ *
+ */
 public interface KeywordProvider {
 
+  boolean hasNextGroup();
+
+  int nextGroup();
+
   /**
-   * Whether has next keyword.
+   * Whether has next.
    * 
    * @return
    */
-  boolean hasNext();
+  boolean hasNextKeyword(int groupId);
 
   /**
    * To get next keyword.
    * 
    * @return
    */
-  KeywordRank next();
+  KeywordRank nextKeyword(int groupId);
 }
