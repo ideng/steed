@@ -24,7 +24,8 @@ public class KeywordRankLogConsumer implements KeywordRankConsumer {
   public void consume(KeywordRank kr) {
     String date = Dates.formatNow("yyyyMMdd");
     for (Rank r : kr.getRankInfos()) {
-      String info = String.format("%s_%s_%d_%s", date, kr.getKeyword(), r.getRank(), r.getHost());
+      String info =
+          String.format("%s_%d_%s_%d_%s", date, kr.getGroup(), kr.getKeyword(), r.getRank(), r.getHost());
       rankLogger.info(info);
     }
 

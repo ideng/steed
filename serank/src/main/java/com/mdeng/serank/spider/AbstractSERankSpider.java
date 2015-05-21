@@ -54,7 +54,7 @@ public abstract class AbstractSERankSpider implements Runnable {
       return;
     }
 
-    while (keywordProvider.hasNext()) {
+    while (keywordProvider.hasNextKeyword()) {
       KeywordRank kr = keywordProvider.nextKeyword();
       if (kr == null) {
         logger.warn("input Keyword rank null");
@@ -74,6 +74,7 @@ public abstract class AbstractSERankSpider implements Runnable {
         }
       }
     }
+
   }
 
   protected KeywordRank grab(KeywordRank keyword) {

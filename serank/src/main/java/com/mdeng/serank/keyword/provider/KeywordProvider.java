@@ -10,21 +10,31 @@ import com.mdeng.serank.keyword.KeywordRank;
  */
 public interface KeywordProvider {
 
+  /**
+   * Whether has next group
+   * 
+   * @return
+   */
   boolean hasNextGroup();
 
+  /**
+   * To get next group
+   * 
+   * @return group id
+   */
   int nextGroup();
 
   /**
-   * Whether has next.
+   * Whether has next keyword in current group.
    * 
    * @return
    */
-  boolean hasNextKeyword(int groupId);
+  boolean hasNextKeyword();
 
   /**
-   * To get next keyword.
+   * To get next keyword in current group.
    * 
    * @return
    */
-  KeywordRank nextKeyword(int groupId);
+  KeywordRank nextKeyword();
 }

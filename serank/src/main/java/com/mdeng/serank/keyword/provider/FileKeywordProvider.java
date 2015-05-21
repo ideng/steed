@@ -1,5 +1,6 @@
 package com.mdeng.serank.keyword.provider;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.mdeng.serank.keyword.KeywordRank;
@@ -258,11 +259,8 @@ public class FileKeywordProvider implements KeywordProvider {
                              "农作物价格", // 50
                              };
   private int index=0;
-  @Override
-  public synchronized boolean hasNext() {
-    // TODO Auto-generated method stub
-    return index<keywords.length;
-  }
+  @Value("${serank.keyword.dir}")
+  private String dir;
 
   @Override
   public synchronized KeywordRank nextKeyword() {
@@ -270,6 +268,24 @@ public class FileKeywordProvider implements KeywordProvider {
     KeywordRank kr = new KeywordRank();
     kr.setKeyword(keywords[index++]);
     return kr;
+  }
+
+  @Override
+  public boolean hasNextGroup() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public int nextGroup() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public boolean hasNextKeyword() {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }
