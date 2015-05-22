@@ -47,6 +47,10 @@ public abstract class AbstractSERankSpider implements Runnable {
   @Value("${serank.spider.top}")
   protected int top = 10;
   protected int groupId;
+
+  private static final int CONNECTION_TIMEOUT = 10 * 1000;
+  private static final int SOCKET_TIMEOUT = 10 * 1000;
+
   protected abstract SEType getSEType();
 
   @Override
@@ -77,7 +81,7 @@ public abstract class AbstractSERankSpider implements Runnable {
       }
     }
 
-    logger.info("group {} finished",groupId);
+    logger.info("group {} finished", groupId);
   }
 
   protected KeywordRank grab(KeywordRank keyword) {
@@ -108,14 +112,15 @@ public abstract class AbstractSERankSpider implements Runnable {
 
   protected String getPageContent(String url) {
     String content = null;
-    // TODO: time out setting
     HttpRequestBuilder builder = HttpRequestBuilder.create().get(url);
     StringEntityHandler handler = new StringEntityHandler();
     if (!proxyEnabled) {
       content = builder.execute(handler);
     } else {
       HttpHost host = pool.getProxy();
-      RequestConfig config = RequestConfig.custom().setProxy(host).build();
+      RequestConfig config =
+          RequestConfig.custom().setProxy(host).setConnectionRequestTimeout(CONNECTION_TIMEOUT)
+              .setSocketTimeout(SOCKET_TIMEOUT).build();
       content = builder.config(config).execute(handler);
     }
 
