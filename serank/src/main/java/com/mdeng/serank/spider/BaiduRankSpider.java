@@ -60,7 +60,7 @@ public class BaiduRankSpider extends AbstractSERankSpider {
   @Override
   protected String getUrl(String keyword) {
     // TODO encode keyword
-    String url = "http://www.baidu.com/s?wd=" + keyword + "&pn=0&rn=30";
+    String url = "http://www.baidu.com/s?wd=" + keyword + "&pn=0&rn="+top;
     return url;
   }
 

@@ -44,6 +44,8 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected HttpProxyPool pool;
   @Value("${serank.proxy.enabled}")
   protected boolean proxyEnabled;
+  @Value("${serank.spider.top}")
+  protected int top = 10;
   protected int groupId;
   protected abstract SEType getSEType();
 
