@@ -3,15 +3,10 @@ package com.mdeng.serank.keyword.provider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
@@ -24,257 +19,6 @@ import com.mdeng.serank.keyword.KeywordRank;
 
 @Component
 public class FileKeywordProvider implements KeywordGroupProvider, KeywordProvider {
-  private String[] keywords={"农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格", // 50
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格", // 50
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格", // 50
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格", // 50
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格",
-                             "农作物买卖市场",
-                             "有机农作物批发",
-                             "农作物价格", // 50
-                             };
 
   private Logger logger = LoggerFactory.getLogger(FileKeywordProvider.class);
   @Value("${serank.keyword.dir}")
@@ -284,12 +28,12 @@ public class FileKeywordProvider implements KeywordGroupProvider, KeywordProvide
   private int groupId = 0;
   private int keywordIndex = 0;
   private List<String> lines;
-  
+
   @PostConstruct
   public void init() {
     files = new File(dir).listFiles();
   }
-  
+
   @Override
   public boolean hasNextGroup() {
     if (files == null) return false;
@@ -299,27 +43,28 @@ public class FileKeywordProvider implements KeywordGroupProvider, KeywordProvide
   @Override
   public int nextGroup() {
     if (!hasNextGroup()) return 0;
-    
+
     String pathstr = files[fileIndex++].getAbsolutePath();
     Path path = Paths.get(pathstr);
-    
+
     // read file
     try {
       lines = Files.readAllLines(path, Charset.forName("utf-8"));
     } catch (IOException e) {
-      logger.error("Failed to read keyword file {}:{}", path,e.getMessage());
+      logger.error("Failed to read keyword file {}:{}", path, e.getMessage());
       return 0;
     }
-    
+
     // group_1.txt
     String filename = path.getFileName().toString().split("\\.")[0];
-    return Integer.valueOf(filename.replace("group_", ""));
+    groupId = Integer.valueOf(filename.replace("group_", ""));
+    return groupId;
   }
 
   @Override
   public synchronized boolean hasNextKeyword(int groupId) {
     if (groupId <= 0) return false;
-    return this.groupId == groupId?keywordIndex<lines.size():false;
+    return this.groupId == groupId ? keywordIndex < lines.size() : false;
   }
 
   @Override
@@ -327,7 +72,7 @@ public class FileKeywordProvider implements KeywordGroupProvider, KeywordProvide
     if (!hasNextKeyword(groupId)) return null;
     KeywordRank kr = new KeywordRank();
     kr.setGroup(groupId);
-    kr.setKeyword(lines.get(fileIndex++).trim());
+    kr.setKeyword(lines.get(keywordIndex++).trim());
     return kr;
   }
 

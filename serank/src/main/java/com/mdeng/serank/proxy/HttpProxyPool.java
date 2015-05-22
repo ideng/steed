@@ -10,6 +10,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -31,12 +32,13 @@ public class HttpProxyPool {
    */
   private List<HttpHost> pool = Lists.newArrayList();
   private ProxyProvider provider;
-
+  @Value("${serank.proxy.enabled}")
+  private boolean proxyEnabled;
   public HttpProxyPool() {}
 
   @Autowired
   public HttpProxyPool(ProxyProvider provider) {
-    if (provider != null) {
+    if (provider != null && proxyEnabled) {
       this.provider = provider;
       init();
       monitor();
