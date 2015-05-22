@@ -44,7 +44,7 @@ public abstract class AbstractSERankSpider implements Runnable {
   protected HttpProxyPool pool;
   @Value("${serank.proxy.enabled}")
   protected boolean proxyEnabled;
-
+  protected int groupId;
   protected abstract SEType getSEType();
 
   @Override
@@ -54,8 +54,8 @@ public abstract class AbstractSERankSpider implements Runnable {
       return;
     }
 
-    while (keywordProvider.hasNextKeyword()) {
-      KeywordRank kr = keywordProvider.nextKeyword();
+    while (keywordProvider.hasNextKeyword(groupId)) {
+      KeywordRank kr = keywordProvider.nextKeyword(groupId);
       if (kr == null) {
         logger.warn("input Keyword rank null");
       } else {
@@ -75,6 +75,7 @@ public abstract class AbstractSERankSpider implements Runnable {
       }
     }
 
+    logger.info("group {} finished",groupId);
   }
 
   protected KeywordRank grab(KeywordRank keyword) {
@@ -192,5 +193,9 @@ public abstract class AbstractSERankSpider implements Runnable {
     }
 
     return host;
+  }
+
+  public void setGroup(int groupId) {
+    this.groupId = groupId;
   }
 }

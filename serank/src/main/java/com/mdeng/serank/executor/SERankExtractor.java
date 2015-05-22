@@ -43,15 +43,16 @@ public class SERankExtractor {
     this.threadCount = threadCount;
   }
 
-  public void extract() {
-    logger.info("start to extract...");
+  public void extract(int groupId) {
+    logger.info("start to extract groud {} ...", groupId);
     if (spiders == null) {
-      logger.warn("no spider configured");
+      logger.warn("no spider configured, return");
       return;
     }
 
     ExecutorService es = Executors.newCachedThreadPool();
     for (AbstractSERankSpider spider : spiders) {
+      spider.setGroup(groupId);
       for (int i = 0; i < threadCount; i++) {
         es.submit(spider);
       }

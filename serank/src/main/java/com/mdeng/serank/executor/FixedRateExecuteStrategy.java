@@ -4,8 +4,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.mdeng.serank.keyword.provider.KeywordGroupProvider;
 
 /**
  * Fixed rate execute strategy
@@ -16,10 +19,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class FixedRateExecuteStrategy implements ExecuteStrategy {
 
+  @Autowired
   private SERankExtractor executor;
   @Value("${serank.executor.frequency}")
   private int frequency;
-
+  @Autowired
+  private KeywordGroupProvider kgp;
   public int getFrequency() {
     return frequency;
   }
@@ -45,9 +50,23 @@ public class FixedRateExecuteStrategy implements ExecuteStrategy {
 
       @Override
       public void run() {
-        executor.extract();
+        while (kgp.hasNextGroup()) {
+          int groupId = kgp.nextGroup();
+          executor.extract(groupId);  
+        }
       }
     }, 0, frequency, TimeUnit.SECONDS);
+  }
+
+  @Override
+  public void setKeywordGroupProvider(KeywordGroupProvider kgp) {
+    this.kgp = kgp;
+    
+  }
+
+  @Override
+  public KeywordGroupProvider getKeywordGroupProvider() {
+    return kgp;
   }
 
 }
