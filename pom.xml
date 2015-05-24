@@ -8,6 +8,7 @@
 
 	<properties>
 		<spring.version>3.2.3.RELEASE</spring.version>
+		<hadoop.version>2.6.0</hadoop.version>
 	</properties>
 
 	<dependencyManagement>
@@ -124,6 +125,33 @@
 				<version>2.2.1</version>
 			</dependency>
 
+			<dependency>  
+				<groupId>org.apache.mrunit</groupId>  
+				<artifactId>mrunit</artifactId>  
+				<version>0.9.0-incubating</version>
+				<classifier>hadoop2</classifier> 
+				<scope>test</scope>
+			</dependency>
+			<dependency>  
+				<groupId>org.apache.hadoop</groupId>  
+				<artifactId>hadoop-core</artifactId>  
+				<version>1.2.0</version>  
+			</dependency>
+			<dependency>  
+				<groupId>org.apache.hadoop</groupId>  
+				<artifactId>hadoop-common</artifactId>  
+				<version>${hadoop.version}</version>  
+			</dependency>  
+			<dependency>  
+				<groupId>org.apache.hadoop</groupId>  
+				<artifactId>hadoop-hdfs</artifactId>  
+				<version>${hadoop.version}</version>  
+			</dependency>  
+			<dependency>  
+				<groupId>org.apache.hadoop</groupId>  
+				<artifactId>hadoop-client</artifactId>  
+				<version>${hadoop.version}</version>  
+			</dependency> 
 			<!-- utils -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
