@@ -1,6 +1,9 @@
 package com.mdeng.common.excel;
 
+import java.util.Map;
+
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import com.mdeng.common.dal.IEntity;
 
 /**
@@ -16,13 +19,12 @@ public class SheetContentsRowHandler extends AbstractSheetContentsHandler {
 
   public SheetContentsRowHandler(Function<SimpleRow, ? extends IEntity> function) {
     this.function = function;
-    row = new SimpleRow();
   }
 
   @Override
   public void startRow(int rowNum) {
     super.startRow(rowNum);
-    row.setRowIndex(rowNum);
+    row = new SimpleRowImpl(rowNum);
   }
 
   @Override
@@ -32,7 +34,40 @@ public class SheetContentsRowHandler extends AbstractSheetContentsHandler {
 
   @Override
   public void cell(String cellReference, String formattedValue) {
-    row.setCellValue(cellReference, formattedValue);
+    int cellIndex = cellReference.charAt(0) - 'A';
+    row.setCellValue(cellIndex, formattedValue);
   }
 
+  class SimpleRowImpl implements SimpleRow {
+    private Map<String, String> innerRow = Maps.newHashMap();
+    private int rowIndex;
+
+    SimpleRowImpl(int rowIndex) {
+      super();
+      this.rowIndex = rowIndex;
+    }
+
+    @Override
+    public String getCellValue(int cellIndex) {
+      return innerRow.get(cellReference(cellIndex));
+    }
+
+    @Override
+    public int getRowIndex() {
+      return rowIndex;
+    }
+
+    void setCellValue(String key, String value) {
+      innerRow.put(key, value);
+    }
+
+    @Override
+    public void setCellValue(int cellIndex, String value) {
+      innerRow.put(cellReference(cellIndex), value);
+    }
+
+    private String cellReference(int cellIndex) {
+      return String.valueOf((char) ('A' + cellIndex)) + (getRowIndex() + 1);
+    }
+  }
 }
