@@ -57,10 +57,6 @@ public class SheetContentsRowHandler extends AbstractSheetContentsHandler {
       return rowIndex;
     }
 
-    void setCellValue(String key, String value) {
-      innerRow.put(key, value);
-    }
-
     @Override
     public void setCellValue(int cellIndex, String value) {
       innerRow.put(cellReference(cellIndex), value);
