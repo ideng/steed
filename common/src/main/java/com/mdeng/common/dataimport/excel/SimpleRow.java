@@ -1,4 +1,4 @@
-package com.mdeng.common.excel;
+package com.mdeng.common.dataimport.excel;
 
 public interface SimpleRow {
 
