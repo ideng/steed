@@ -6,6 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,6 +51,13 @@ public class SmallExcelImporter extends AbstractImporter {
     }
   }
 
+  public void waitForComplete() {
+    try {
+      es.shutdown();
+      es.awaitTermination(5, TimeUnit.DAYS);
+    } catch (InterruptedException e) {}
+  }
+
   class Scaner implements Runnable {
 
     @Override
@@ -69,4 +77,5 @@ public class SmallExcelImporter extends AbstractImporter {
     }
 
   }
+
 }
