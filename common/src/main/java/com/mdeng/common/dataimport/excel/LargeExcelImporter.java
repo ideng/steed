@@ -50,11 +50,15 @@ public class LargeExcelImporter extends AbstractImporter {
   }
 
   public void exec() {
+    int count = 0;
     for (File file : files) {
       es.submit(new Scaner(file));
+      count++;
+      es.submit(new Consumer());
+      count++;
     }
 
-    for (int i = 0; i < MAX_THREAD_SIZE; i++) {
+    for (int i = 0; i < MAX_THREAD_SIZE - count; i++) {
       es.submit(new Consumer());
     }
   }

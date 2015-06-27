@@ -15,6 +15,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.google.common.base.Function;
 import com.mdeng.common.dal.IEntity;
 import com.mdeng.common.dataimport.AbstractImporter;
+import com.mdeng.common.dataimport.excel.LargeExcelImporter.Consumer;
+import com.mdeng.common.dataimport.excel.LargeExcelImporter.Scaner;
 
 /**
  * 处理较小的Excel
@@ -40,13 +42,15 @@ public class SmallExcelImporter extends AbstractImporter {
   }
 
   public void exec() {
-    // scan
+    int count = 0;
     for (File file : files) {
       es.submit(new Scaner(file));
+      count++;
+      es.submit(new Consumer());
+      count++;
     }
 
-    // consumer
-    for (int i = 0; i < MAX_THREAD_SIZE; i++) {
+    for (int i = 0; i < MAX_THREAD_SIZE - count; i++) {
       es.submit(new Consumer());
     }
   }
