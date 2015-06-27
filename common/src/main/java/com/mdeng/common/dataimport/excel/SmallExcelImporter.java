@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,26 +29,25 @@ public class SmallExcelImporter extends AbstractImporter {
   private BlockingQueue<Row> queue;
   private ExecutorService es;
   private Function<Row, ? extends IEntity> function;
+  private CountDownLatch cdl;
 
   public SmallExcelImporter(String path, Function<Row, ? extends IEntity> function) {
     super(path);
     queue = new ArrayBlockingQueue<Row>(MAX_QUEUE_SIZE);
-    es = Executors.newCachedThreadPool();
+    es = Executors.newFixedThreadPool(MAX_THREAD_SIZE);
     this.function = function;
+    cdl = new CountDownLatch(files.length);
   }
 
   public void exec() {
-    es.submit(new Scaner());
-    for (int i = 0; i < MAX_THREAD_SIZE; i++) {
-      es.submit(new Runnable() {
+    // scan
+    for (File file : files) {
+      es.submit(new Scaner(file));
+    }
 
-        @Override
-        public void run() {
-          try {
-            function.apply(queue.take());
-          } catch (InterruptedException e) {}
-        }
-      });
+    // consumer
+    for (int i = 0; i < MAX_THREAD_SIZE; i++) {
+      es.submit(new Consumer());
     }
   }
 
@@ -59,23 +59,36 @@ public class SmallExcelImporter extends AbstractImporter {
   }
 
   class Scaner implements Runnable {
+    private final File file;
+
+    public Scaner(File file) {
+      this.file = file;
+    }
 
     @Override
     public void run() {
-      for (final File file : files) {
-        try {
-          XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(file));
-          for (Row row : wb.getSheetAt(0)) {
-            queue.put(row);
-          }
-          logger.info("{0} scaned.", file.getName());
-        } catch (Exception e) {
-          logger.error("{0} scaned failed: {1}", file.getName(), e.getMessage());
+      try {
+        XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(file));
+        for (Row row : wb.getSheetAt(0)) {
+          queue.put(row);
         }
-
+        cdl.countDown();
+        logger.info("{0} scaned.", file.getName());
+      } catch (Exception e) {
+        logger.error("{0} scaned failed: {1}", file.getName(), e.getMessage());
       }
     }
-
   }
 
+  class Consumer implements Runnable {
+    @Override
+    public void run() {
+      try {
+        while (cdl.getCount() > 0 || queue.size() > 0) {
+          Row row = queue.poll(5, TimeUnit.MILLISECONDS);
+          if (row != null) function.apply(row);
+        }
+      } catch (InterruptedException e) {}
+    }
+  }
 }

@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
@@ -37,68 +39,86 @@ public class LargeExcelImporter extends AbstractImporter {
   private BlockingQueue<SimpleRow> queue;
   private ExecutorService es;
   private Function<SimpleRow, ? extends IEntity> function;
+  private CountDownLatch cdl;
 
   public LargeExcelImporter(String path, Function<SimpleRow, ? extends IEntity> function) {
     super(path);
     queue = new ArrayBlockingQueue<SimpleRow>(MAX_QUEUE_SIZE);
-    es = Executors.newCachedThreadPool();
+    es = Executors.newFixedThreadPool(MAX_THREAD_SIZE);
     this.function = function;
+    cdl = new CountDownLatch(files.length);
   }
 
   public void exec() {
-    es.submit(new Scaner());
-    for (int i = 0; i < MAX_THREAD_SIZE; i++) {
-      es.submit(new Runnable() {
+    for (File file : files) {
+      es.submit(new Scaner(file));
+    }
 
-        @Override
-        public void run() {
-          try {
-            function.apply(queue.take());
-          } catch (InterruptedException e) {}
-        }
-      });
+    for (int i = 0; i < MAX_THREAD_SIZE; i++) {
+      es.submit(new Consumer());
     }
   }
 
+  public void waitForComplete() {
+    try {
+      es.shutdown();
+      es.awaitTermination(5, TimeUnit.DAYS);
+    } catch (InterruptedException e) {}
+  }
+
   class Scaner implements Runnable {
+    private final File file;
+
+    public Scaner(File file) {
+      this.file = file;
+    }
 
     @Override
     public void run() {
-      for (final File file : files) {
-        try {
-          OPCPackage pkg = OPCPackage.open(file);
-          XSSFReader r = new XSSFReader(pkg);
+      try {
+        OPCPackage pkg = OPCPackage.open(file);
+        XSSFReader r = new XSSFReader(pkg);
 
-          XMLReader parser =
-              XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-          ReadOnlySharedStringsTable rosst = new ReadOnlySharedStringsTable(pkg);
-          SheetContentsRowHandler contentsHandler = new SheetContentsRowHandler();
-          ContentHandler handler =
-              new XSSFSheetXMLHandler(r.getStylesTable(), rosst, contentsHandler, true);
-          parser.setContentHandler(handler);
+        XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+        ReadOnlySharedStringsTable rosst = new ReadOnlySharedStringsTable(pkg);
+        SheetContentsRowHandler contentsHandler = new SheetContentsRowHandler();
+        ContentHandler handler =
+            new XSSFSheetXMLHandler(r.getStylesTable(), rosst, contentsHandler, true);
+        parser.setContentHandler(handler);
 
-          // rId2 found by processing the Workbook
-          // Seems to either be rId# or rSheet#
-          // InputStream sheet0 = r.getSheet("rId0");
-          // InputSource sheetSource = new InputSource(sheet0);
-          // parser.parse(sheetSource);
-          // sheet0.close();
-          Iterator<InputStream> sheets = r.getSheetsData();
-          while (sheets.hasNext()) {
-            InputStream sheet = sheets.next();
-            InputSource sheetSource = new InputSource(sheet);
-            parser.parse(sheetSource);
-            sheet.close();
-          }
-
-          logger.info("{0} scaned.", file.getName());
-        } catch (Exception e) {
-          logger.error("{0} scaned failed: {1}", file.getName(), e.getMessage());
+        // rId2 found by processing the Workbook
+        // Seems to either be rId# or rSheet#
+        // InputStream sheet0 = r.getSheet("rId0");
+        // InputSource sheetSource = new InputSource(sheet0);
+        // parser.parse(sheetSource);
+        // sheet0.close();
+        Iterator<InputStream> sheets = r.getSheetsData();
+        while (sheets.hasNext()) {
+          InputStream sheet = sheets.next();
+          InputSource sheetSource = new InputSource(sheet);
+          parser.parse(sheetSource);
+          sheet.close();
         }
-
+        cdl.countDown();
+        logger.info("{0} scaned.", file.getName());
+      } catch (Exception e) {
+        logger.error("{0} scaned failed: {1}", file.getName(), e.getMessage());
       }
+
     }
 
+  }
+
+  class Consumer implements Runnable {
+    @Override
+    public void run() {
+      try {
+        while (cdl.getCount() > 0 || queue.size() > 0) {
+          SimpleRow row = queue.poll(5, TimeUnit.MILLISECONDS);
+          if (row != null) function.apply(row);
+        }
+      } catch (InterruptedException e) {}
+    }
   }
 
   class SheetContentsRowHandler implements SheetContentsHandler {
