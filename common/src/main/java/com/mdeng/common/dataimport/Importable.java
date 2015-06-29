@@ -45,7 +45,7 @@ public abstract class Importable<T extends IEntity> {
         }
       }
     } catch (Exception e) {
-      logger.error(e.getMessage());
+      logger.error("failed at preprocess: {}", e.getMessage());
       return false;
     }
     return true;
@@ -59,7 +59,7 @@ public abstract class Importable<T extends IEntity> {
       str = StringUtils.trim(str);
       str = removeInvalids(str);
     } catch (Exception e) {
-      logger.error("failed to process string: {0}, msg: {1}", str, e.getMessage());
+      logger.error("failed to process string: {}, msg: {}", str, e.getMessage());
     }
 
     return str;
@@ -80,7 +80,7 @@ public abstract class Importable<T extends IEntity> {
         if (arr[i].length() > 0) ret.add(arr[i]);
       }
     } catch (Exception e) {
-      logger.error("failed to process array: {0}, msg: {1}", arr, e.getMessage());
+      logger.error("failed to process array: {}, msg: {}", arr, e.getMessage());
     }
 
     return ret.toArray(new String[0]);
@@ -100,7 +100,7 @@ public abstract class Importable<T extends IEntity> {
    * 
    * @return
    */
-  public abstract T toEntity();
+  public abstract T toEntity() throws Exception;
 
   /**
    * 自定义非法字符

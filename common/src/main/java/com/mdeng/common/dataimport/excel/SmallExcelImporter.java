@@ -77,9 +77,9 @@ public class SmallExcelImporter extends AbstractImporter {
           queue.put(row);
         }
         cdl.countDown();
-        logger.info("{0} scaned.", file.getName());
+        logger.info("{} scaned.", file.getName());
       } catch (Exception e) {
-        logger.error("{0} scaned failed: {1}", file.getName(), e.getMessage());
+        logger.error("{} scaned failed: {}", file.getName(), e.getMessage());
       }
     }
   }

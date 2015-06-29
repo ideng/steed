@@ -104,9 +104,9 @@ public class LargeExcelImporter extends AbstractImporter {
           sheet.close();
         }
         cdl.countDown();
-        logger.info("{0} scaned.", file.getName());
+        logger.info("{} scaned.", file.getName());
       } catch (Exception e) {
-        logger.error("{0} scaned failed: {1}", file.getName(), e.getMessage());
+        logger.error("{} scaned failed: {}", file.getName(), e.getMessage());
       }
 
     }
@@ -138,7 +138,7 @@ public class LargeExcelImporter extends AbstractImporter {
       try {
         queue.put(row);
       } catch (InterruptedException e) {
-        logger.warn("row {0} interruptted.", row.getRowIndex());
+        logger.warn("row {} interruptted.", row.getRowIndex());
       }
     }
 
