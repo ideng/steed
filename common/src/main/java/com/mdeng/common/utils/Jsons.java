@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.http.util.Args;
+import org.codehaus.jackson.JsonParser.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -21,21 +22,20 @@ public class Jsons {
    * Shared ObjectMapper
    */
   public static final ObjectMapper MAPPER = new ObjectMapper();
+  static {
+    MAPPER.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+  }
 
   /**
    * Convert an object to JSON string
    * 
    * @param obj
    * @return
+   * @throws Exception
    */
-  public static String obj2Json(Object obj) {
+  public static String obj2Json(Object obj) throws Exception {
     Args.notNull(obj, "obj");
-
-    try {
-      return MAPPER.writeValueAsString(obj);
-    } catch (Exception e) {}
-
-    return null;
+    return MAPPER.writeValueAsString(obj);
   }
 
   /**
@@ -43,14 +43,13 @@ public class Jsons {
    * 
    * @param out
    * @param obj
+   * @throws Exception
    */
-  public static void writeAsJson(OutputStream out, Object obj) {
+  public static void writeAsJson(OutputStream out, Object obj) throws Exception {
     Args.notNull(out, "out");
     Args.notNull(obj, "obj");
 
-    try {
-      MAPPER.writeValue(out, obj);
-    } catch (Exception e) {}
+    MAPPER.writeValue(out, obj);
   }
 
   /**
@@ -60,15 +59,11 @@ public class Jsons {
    * @param clazz
    * @return
    */
-  public static <T> T json2Obj(String json, Class<T> clazz) {
+  public static <T> T json2Obj(String json, Class<T> clazz) throws Exception {
     Args.notNull(json, "json");
     Args.notNull(clazz, "clazz");
 
-    try {
-      return MAPPER.readValue(json, clazz);
-    } catch (Exception e) {}
-
-    return null;
+    return MAPPER.readValue(json, clazz);
   }
 
   /**
@@ -78,15 +73,11 @@ public class Jsons {
    * @param clazz
    * @return
    */
-  public static <T> T json2Obj(InputStream in, Class<T> clazz) {
+  public static <T> T json2Obj(InputStream in, Class<T> clazz) throws Exception {
     Args.notNull(in, "in");
     Args.notNull(clazz, "clazz");
 
-    try {
-      return MAPPER.readValue(in, clazz);
-    } catch (Exception e) {}
-
-    return null;
+    return MAPPER.readValue(in, clazz);
   }
 
   /**
@@ -96,16 +87,12 @@ public class Jsons {
    * @param clazz
    * @return
    */
-  public static <T> List<T> json2List(String json, Class<T[]> clazz) {
+  public static <T> List<T> json2List(String json, Class<T[]> clazz) throws Exception {
     Args.notNull(json, "json");
     Args.notNull(clazz, "clazz");
 
-    try {
-      T[] ts = MAPPER.readValue(json, clazz);
-      return Arrays.asList(ts);
-    } catch (Exception e) {}
-
-    return null;
+    T[] ts = MAPPER.readValue(json, clazz);
+    return Arrays.asList(ts);
   }
 
   /**
@@ -116,14 +103,10 @@ public class Jsons {
    * @return
    */
   @SuppressWarnings("unchecked")
-  public static <T> Set<T> json2Set(String json, Class<T> clazz) {
+  public static <T> Set<T> json2Set(String json, Class<T> clazz) throws Exception {
     Args.notNull(json, "json");
     Args.notNull(clazz, "clazz");
 
-    try {
-      return MAPPER.readValue(json, Set.class);
-    } catch (Exception e) {}
-
-    return null;
+    return MAPPER.readValue(json, Set.class);
   }
 }
