@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,32 +31,19 @@ import com.mdeng.common.dataimport.AbstractImporter;
  */
 public class LargeExcelImporter extends AbstractImporter {
 
-  private static final int MAX_QUEUE_SIZE = 1000;
   private static final int MAX_THREAD_SIZE = 5;
-  private BlockingQueue<SimpleRow> queue;
   private ExecutorService es;
   private Function<SimpleRow, ? extends IEntity> function;
-  private CountDownLatch cdl;
 
   public LargeExcelImporter(String path, Function<SimpleRow, ? extends IEntity> function) {
     super(path);
-    queue = new ArrayBlockingQueue<SimpleRow>(MAX_QUEUE_SIZE);
     es = Executors.newFixedThreadPool(MAX_THREAD_SIZE);
     this.function = function;
-    cdl = new CountDownLatch(files.length);
   }
 
   public void exec() {
-    int count = 0;
     for (File file : files) {
       es.submit(new Scaner(file));
-      count++;
-      es.submit(new Consumer());
-      count++;
-    }
-
-    for (int i = 0; i < MAX_THREAD_SIZE - count; i++) {
-      es.submit(new Consumer());
     }
   }
 
@@ -103,26 +87,13 @@ public class LargeExcelImporter extends AbstractImporter {
           parser.parse(sheetSource);
           sheet.close();
         }
-        cdl.countDown();
-        logger.info("{} scaned.", file.getName());
+        logger.info("{} completed.", file.getName());
       } catch (Exception e) {
-        logger.error("{} scaned failed: {}", file.getName(), e.getMessage());
+        logger.error("{} process failed.", file.getName(), e);
       }
 
     }
 
-  }
-
-  class Consumer implements Runnable {
-    @Override
-    public void run() {
-      try {
-        while (cdl.getCount() > 0 || queue.size() > 0) {
-          SimpleRow row = queue.poll(5, TimeUnit.MILLISECONDS);
-          if (row != null) function.apply(row);
-        }
-      } catch (InterruptedException e) {}
-    }
   }
 
   class SheetContentsRowHandler implements SheetContentsHandler {
@@ -135,11 +106,7 @@ public class LargeExcelImporter extends AbstractImporter {
 
     @Override
     public void endRow() {
-      try {
-        queue.put(row);
-      } catch (InterruptedException e) {
-        logger.warn("row {} interruptted.", row.getRowIndex());
-      }
+      function.apply(row);
     }
 
     @Override

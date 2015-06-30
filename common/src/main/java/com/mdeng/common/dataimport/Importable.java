@@ -12,9 +12,17 @@ import com.google.common.collect.Lists;
 import com.mdeng.common.dal.IEntity;
 import com.mdeng.common.utils.Charsets;
 
+/**
+ * 可导入的实体
+ * 
+ * @author hui.deng
+ *
+ * @param <T>
+ */
 public abstract class Importable<T extends IEntity> {
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
+  protected boolean removeHtml;
 
   /**
    * 预处理
@@ -45,42 +53,34 @@ public abstract class Importable<T extends IEntity> {
         }
       }
     } catch (Exception e) {
-      logger.error("failed at preprocess: {}", e.getMessage());
+      logger.error("failed at preprocess.", e);
       return false;
     }
     return true;
   }
 
-  protected String processItem(String str) {
+  protected String processItem(String str) throws Exception {
     str = StringUtils.defaultString(str);
-    try {
-      str = Charsets.remove4BytesUTF8Char(str);
-      str = Charsets.removeHtml(str);
-      str = StringUtils.trim(str);
-      str = removeInvalids(str);
-    } catch (Exception e) {
-      logger.error("failed to process string: {}, msg: {}", str, e.getMessage());
-    }
+    str = Charsets.remove4BytesUTF8Char(str);
+    if (removeHtml) str = Charsets.removeHtml(str);
+    str = StringUtils.trim(str);
+    str = removeInvalids(str);
 
     return str;
   }
 
-  protected String[] processItem(String[] arr) {
+  protected String[] processItem(String[] arr) throws Exception {
     List<String> ret = Lists.newArrayList();
 
-    try {
-      for (int i = 0; i < arr.length; i++) {
-        arr[i] = StringUtils.defaultString(arr[i]);
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = StringUtils.defaultString(arr[i]);
 
-        arr[i] = Charsets.remove4BytesUTF8Char(arr[i]);
-        arr[i] = Charsets.removeHtml(arr[i]);
-        arr[i] = StringUtils.trim(arr[i]);
-        arr[i] = removeInvalids(arr[i]);
+      arr[i] = Charsets.remove4BytesUTF8Char(arr[i]);
+      if (removeHtml) arr[i] = Charsets.removeHtml(arr[i]);
+      arr[i] = StringUtils.trim(arr[i]);
+      arr[i] = removeInvalids(arr[i]);
 
-        if (arr[i].length() > 0) ret.add(arr[i]);
-      }
-    } catch (Exception e) {
-      logger.error("failed to process array: {}, msg: {}", arr, e.getMessage());
+      if (arr[i].length() > 0) ret.add(arr[i]);
     }
 
     return ret.toArray(new String[0]);
