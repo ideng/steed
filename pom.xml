@@ -200,10 +200,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<modules>
-		<module>quiz</module>
-		<module>common</module>
-		<module>note</module>
-		<module>serank</module>
-	</modules>
 </project>
