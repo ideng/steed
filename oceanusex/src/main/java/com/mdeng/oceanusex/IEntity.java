@@ -1,4 +1,4 @@
-package com.mdeng.oceanusupport.interfaces;
+package com.mdeng.oceanusex;
 
 /**
  * A flag interface

@@ -7,7 +7,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>com.mdeng</groupId>
-	<artifactId>oceanusupport</artifactId>
+	<artifactId>oceanusex</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
 	<dependencies>
