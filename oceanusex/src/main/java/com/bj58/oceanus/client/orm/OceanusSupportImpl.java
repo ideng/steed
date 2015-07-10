@@ -3,6 +3,7 @@ package com.bj58.oceanus.client.orm;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -15,6 +16,7 @@ import com.mdeng.oceanusex.exceptions.OceanusDuplicateException;
 import com.mdeng.oceanusex.exceptions.OceanusNotFoundException;
 import com.mdeng.oceanusex.exceptions.OceanusSqlException;
 import com.mdeng.oceanusex.orm.BaseDaoEx;
+import com.mdeng.oceanusex.orm.OceanusSupport;
 
 /**
  * Base database access service
@@ -23,12 +25,11 @@ import com.mdeng.oceanusex.orm.BaseDaoEx;
  *
  * @param <T>
  */
-public class SupportService<T extends OceaunsEntity> extends BaseDaoEx {
-
+public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx implements OceanusSupport<T>{
+  
   protected Class<T> clazz;
 
-  public SupportService(Class<T> clazz, String configPath) {
-    super(configPath);
+  public OceanusSupportImpl(Class<T> clazz) {
     this.clazz = clazz;
   }
 
@@ -63,57 +64,6 @@ public class SupportService<T extends OceaunsEntity> extends BaseDaoEx {
   }
 
   /**
-   * Get by page
-   * 
-   * @param pgn
-   * @return
-   * @throws Exception
-   */
-  public OceanusResult<T> getByPage(Pagination pgn) throws Exception {
-    return pagination("1 = 1", pgn);
-  }
-
-  /**
-   * Get by field, return list value
-   * 
-   * @param field
-   * @param value
-   * @return
-   * @throws Exception
-   */
-  public OceanusResult<T> getByField(DBField field, Pagination pgn) throws Exception {
-    return pagination(String.format("%s=?", field.getName()), pgn, field.getValue());
-  }
-
-  /**
-   * Get by fields, return single value, null if not found
-   * 
-   * @param fields
-   * @param values
-   * @return
-   * @throws Exception
-   */
-  public T getByFields(DBField... fields) throws Exception {
-    String where = "1=1 ";
-    for (DBField field : fields) {
-      where += "and " + field.getName() + "=? ";
-    }
-
-    return singleIfAny(where, DBField.values(Lists.newArrayList(fields)));
-  }
-
-  /**
-   * Count by field
-   * 
-   * @param field
-   * @return
-   * @throws Exception
-   */
-  public int count(DBField field) throws Exception {
-    return count(String.format("%s=?", field.getName()), field.getValue());
-  }
-
-  /**
    * Count by fields
    * 
    * @param fields
@@ -121,13 +71,16 @@ public class SupportService<T extends OceaunsEntity> extends BaseDaoEx {
    * @return
    * @throws Exception
    */
-  public int count(List<DBField> fields) throws Exception {
+  public int count(DBField... fields) throws Exception {
     String where = "1=1 ";
-    for (DBField field : fields) {
-      where += "and " + field.getName() + "=? ";
+    if (fields != null) {
+      for (DBField field : fields) {
+        where += "and " + field.getName() + "=? ";
+      }
+      return count(where, DBField.values(Arrays.asList(fields)));
     }
 
-    return count(where, DBField.values(fields));
+    return count(where);
   }
 
   /**
@@ -139,13 +92,16 @@ public class SupportService<T extends OceaunsEntity> extends BaseDaoEx {
    * @return
    * @throws Exception
    */
-  public OceanusResult<T> getByFields(List<DBField> fields, Pagination pgn) throws Exception {
+  public OceanusResult<T> getByFields(Pagination pgn, DBField... fields) throws Exception {
     String where = "1=1 ";
-    for (DBField field : fields) {
-      where += "and " + field.getName() + "=? ";
+    if (fields != null) {
+      for (DBField field : fields) {
+        where += "and " + field.getName() + "=? ";
+      }
+      return pagination(where, pgn, DBField.values(Arrays.asList(fields)));
     }
 
-    return pagination(where, pgn, DBField.values(fields));
+    return pagination(where, pgn);
   }
 
   /**
@@ -203,9 +159,14 @@ public class SupportService<T extends OceaunsEntity> extends BaseDaoEx {
    * @throws Exception
    */
   public void update(T t, String... fields) throws Exception {
+    if (fields == null) {
+      update(t);
+      return;
+    }
+
     String sql = OceanusSqlBuilder.instance(clazz).update(t, fields).build();
 
-    List<Object> params = Lists.newArrayList(getFieldsValues(t, Lists.newArrayList(fields)));
+    List<Object> params = Lists.newArrayList(getFieldsValues(t, Arrays.asList(fields)));
     params.add(getAutoIncrementFieldValue(t));
     excuteUpdate(sql, params.toArray());
   }
@@ -248,7 +209,7 @@ public class SupportService<T extends OceaunsEntity> extends BaseDaoEx {
     // list
     String sql = OceanusSqlBuilder.instance(clazz).select().where(where).pagination(pgn).build();
     int start = (pgn.getPageNo() - 1) * pgn.getPageSize();
-    List<Object> params = Lists.newArrayList(values);
+    List<Object> params = values == null ? Lists.newArrayList() : Arrays.asList(values);
     params.add(start);
     params.add(pgn.getPageSize());
 
@@ -275,16 +236,6 @@ public class SupportService<T extends OceaunsEntity> extends BaseDaoEx {
     }
 
     return lst.get(0);
-  }
-
-  protected T singleIfAny(String where, Object... values) throws Exception {
-    String sql = OceanusSqlBuilder.instance(clazz).select().where(where).build();
-    List<T> lst = excuteQuery(clazz, sql, values);
-    if (lst.size() > 0) {
-      return lst.get(0);
-    }
-
-    return null;
   }
 
   protected int count(String where, Object... values) throws Exception {
