@@ -1,6 +1,7 @@
 package com.bj58.oceanus.client.orm;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -98,28 +99,19 @@ public class OceanusSqlBuilder {
     return this;
   }
 
-  public <T> OceanusSqlBuilder update(T t) {
-    builder = new StringBuilder();
-    builder.append("update ").append(tableName).append(" set ");
-    int i = 0;
-    for (String name : names) {
-      builder.append(name).append("=?");
-      if (++i < names.size()) {
-        builder.append(", ");
-      }
-    }
-    // where
-    builder.append(" where ").append(autoIncrementFieldName).append("=?");
-    builder.append(' ');
-    return this;
-  }
-
   public <T> OceanusSqlBuilder update(T t, String... fields) {
     builder = new StringBuilder();
     builder.append("update ").append(tableName).append(" set ");
     int i = 0;
-    for (String name : fields) {
-      if (!names.contains(name)) continue;
+
+    List<String> tmp;
+    if (fields == null)
+      tmp = names;
+    else
+      tmp = Arrays.asList(fields);
+
+    for (String name : tmp) {
+      if (tmp != names && !names.contains(name)) continue;
       builder.append(name).append("=?");
       if (++i < fields.length) {
         builder.append(", ");

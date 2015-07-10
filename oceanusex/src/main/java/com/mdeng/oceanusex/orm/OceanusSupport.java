@@ -70,15 +70,6 @@ public interface OceanusSupport<T extends OceaunsEntity> {
   void insert(List<T> lst) throws Exception;
 
   /**
-   * Update an object
-   * 
-   * @param t
-   * @return
-   * @throws Exception
-   */
-  void update(T t) throws Exception;
-
-  /**
    * Update an object on fields
    * 
    * @param t

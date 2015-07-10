@@ -1,4 +1,4 @@
-package com.mdeng.oceanusex.orm;
+package com.bj58.oceanus.client.orm;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bj58.oceanus.client.Oceanus;
-import com.bj58.oceanus.client.orm.BaseDao;
 
 /**
  * BaseDao extension
@@ -121,4 +120,5 @@ public class BaseDaoEx extends BaseDao {
       Oceanus.close(rs, ps, connection);
     }
   }
+
 }

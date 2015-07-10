@@ -15,7 +15,6 @@ import com.mdeng.oceanusex.dal.Pagination;
 import com.mdeng.oceanusex.exceptions.OceanusDuplicateException;
 import com.mdeng.oceanusex.exceptions.OceanusNotFoundException;
 import com.mdeng.oceanusex.exceptions.OceanusSqlException;
-import com.mdeng.oceanusex.orm.BaseDaoEx;
 import com.mdeng.oceanusex.orm.OceanusSupport;
 
 /**
@@ -25,8 +24,9 @@ import com.mdeng.oceanusex.orm.OceanusSupport;
  *
  * @param <T>
  */
-public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx implements OceanusSupport<T>{
-  
+public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
+    implements OceanusSupport<T> {
+
   protected Class<T> clazz;
 
   public OceanusSupportImpl(Class<T> clazz) {
@@ -137,21 +137,6 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx imple
   }
 
   /**
-   * Update an object
-   * 
-   * @param t
-   * @return
-   * @throws Exception
-   */
-  public void update(T t) throws Exception {
-    String sql = OceanusSqlBuilder.instance(clazz).update(t).build();
-
-    List<Object> params = Lists.newArrayList(getFieldsValues(t));
-    params.add(getAutoIncrementFieldValue(t));
-    excuteUpdate(sql, params.toArray());
-  }
-
-  /**
    * Update an object on fields
    * 
    * @param t
@@ -159,14 +144,9 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx imple
    * @throws Exception
    */
   public void update(T t, String... fields) throws Exception {
-    if (fields == null) {
-      update(t);
-      return;
-    }
-
     String sql = OceanusSqlBuilder.instance(clazz).update(t, fields).build();
 
-    List<Object> params = Lists.newArrayList(getFieldsValues(t, Arrays.asList(fields)));
+    List<Object> params = Arrays.asList((getFieldsValues(t, fields)));
     params.add(getAutoIncrementFieldValue(t));
     excuteUpdate(sql, params.toArray());
   }
@@ -251,18 +231,17 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx imple
     return lst.size() > 0;
   }
 
-  protected Object[] getFieldsValues(T t) throws IllegalAccessException, InvocationTargetException {
-    return getFieldsValues(t, null);
-  }
-
-  protected Object[] getFieldsValues(T t, List<String> fieldNames) throws IllegalAccessException,
+  protected Object[] getFieldsValues(T t, String... fieldNames) throws IllegalAccessException,
       InvocationTargetException {
+    List<String> tmp = null;
+    if (fieldNames != null) tmp = Arrays.asList(fieldNames);
+
     List<Object> params = Lists.newArrayList();
     for (Field field : MappingAnnotationUtil.getAllFields(clazz)) {
       String name = MappingAnnotationUtil.getDBCloumnName(clazz, field);
       if (name != null
           && !(name.equalsIgnoreCase("id") || field.isAnnotationPresent(AutoIncrementId.class))) {
-        if (fieldNames != null && !fieldNames.contains(name)) continue;
+        if (tmp != null && !tmp.contains(name)) continue;
         // 约定不更新或插入Id
         Method method = MappingAnnotationUtil.getGetterMethod(clazz, field);
         params.add(method.invoke(t));
