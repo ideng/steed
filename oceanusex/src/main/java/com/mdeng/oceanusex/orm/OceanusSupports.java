@@ -60,6 +60,7 @@ public class OceanusSupports {
         support = implMap.get(clazz);
         if (support == null) {
           support = new OceanusSupportImpl<T>(clazz);
+          implMap.put(clazz, support);
         }
       }
     }
