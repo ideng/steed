@@ -9,7 +9,7 @@ import com.bj58.oceanus.client.Oceanus;
 import com.bj58.oceanus.client.orm.OceanusSupportImpl;
 import com.bj58.oceanus.core.exception.ConfigurationException;
 import com.google.common.collect.Maps;
-import com.mdeng.oceanusex.dal.OceaunsEntity;
+import com.mdeng.oceanusex.dal.OceanusEntity;
 
 /**
  * Manage all singleton <code>OceanusSupport</code> interface instances
@@ -19,7 +19,7 @@ import com.mdeng.oceanusex.dal.OceaunsEntity;
  */
 public class OceanusSupports {
   private static Logger log = LoggerFactory.getLogger(OceanusSupports.class);
-  private static Map<Class<? extends OceaunsEntity>, OceanusSupport<? extends OceaunsEntity>> implMap;
+  private static Map<Class<? extends OceanusEntity>, OceanusSupport<? extends OceanusEntity>> implMap;
 
   static {
     implMap = Maps.newHashMap();
@@ -51,7 +51,7 @@ public class OceanusSupports {
    * @return
    */
   @SuppressWarnings("unchecked")
-  public static <T extends OceaunsEntity> OceanusSupport<T> getSupport(Class<T> clazz) {
+  public static <T extends OceanusEntity> OceanusSupport<T> getSupport(Class<T> clazz) {
     Oceanus.checkInit();
 
     OceanusSupport<?> support = implMap.get(clazz);

@@ -3,8 +3,8 @@ package com.mdeng.oceanusex.orm;
 import java.util.List;
 
 import com.mdeng.oceanusex.dal.DBField;
+import com.mdeng.oceanusex.dal.OceanusEntity;
 import com.mdeng.oceanusex.dal.OceanusResult;
-import com.mdeng.oceanusex.dal.OceaunsEntity;
 import com.mdeng.oceanusex.dal.Pagination;
 
 /**
@@ -14,7 +14,7 @@ import com.mdeng.oceanusex.dal.Pagination;
  *
  * @param <T>
  */
-public interface OceanusSupport<T extends OceaunsEntity> {
+public interface OceanusSupport<T extends OceanusEntity> {
   /**
    * Get by primary key id, exception if not found
    * 
@@ -42,6 +42,14 @@ public interface OceanusSupport<T extends OceaunsEntity> {
    * @throws Exception
    */
   OceanusResult<T> getByFields(Pagination pgn, DBField... fields) throws Exception;
+
+  /**
+   * Get by fields, exception if not only
+   * @param fields
+   * @return
+   * @throws Exception
+   */
+  T getByFields(DBField... fields) throws Exception;
 
   /**
    * Count by fields

@@ -6,6 +6,6 @@ package com.mdeng.oceanusex.dal;
  * @author Administrator
  *
  */
-public interface OceaunsEntity {
+public interface OceanusEntity {
 
 }

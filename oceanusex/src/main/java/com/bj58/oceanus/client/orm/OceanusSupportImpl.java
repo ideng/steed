@@ -1,4 +1,6 @@
 package com.bj58.oceanus.client.orm;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,8 +11,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.mdeng.oceanusex.dal.AutoIncrementId;
 import com.mdeng.oceanusex.dal.DBField;
+import com.mdeng.oceanusex.dal.OceanusEntity;
 import com.mdeng.oceanusex.dal.OceanusResult;
-import com.mdeng.oceanusex.dal.OceaunsEntity;
 import com.mdeng.oceanusex.dal.Pagination;
 import com.mdeng.oceanusex.exceptions.OceanusDuplicateException;
 import com.mdeng.oceanusex.exceptions.OceanusNotFoundException;
@@ -24,8 +26,9 @@ import com.mdeng.oceanusex.orm.OceanusSupport;
  *
  * @param <T>
  */
-public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
-    implements OceanusSupport<T> {
+public class OceanusSupportImpl<T extends OceanusEntity> extends BaseDaoEx
+    implements
+      OceanusSupport<T> {
 
   protected Class<T> clazz;
 
@@ -53,7 +56,8 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    */
   @SuppressWarnings("unused")
   public List<T> getById(Object[] id) throws Exception {
-    if (id == null || id.length == 0) return Lists.newArrayList();
+    checkNotNull(id, "id can not be null");
+    checkArgument(id.length > 0, "id length is 0");
     StringBuilder where = new StringBuilder(getAutoIncrementFieldName() + " in (");
     for (Object object : id) {
       where.append("?,");
@@ -93,15 +97,21 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    * @throws Exception
    */
   public OceanusResult<T> getByFields(Pagination pgn, DBField... fields) throws Exception {
+    checkNotNull(fields, "fields can not be null");
     String where = "1=1 ";
-    if (fields != null) {
-      for (DBField field : fields) {
-        where += "and " + field.getName() + "=? ";
-      }
-      return pagination(where, pgn, DBField.values(Arrays.asList(fields)));
+    for (DBField field : fields) {
+      where += "and " + field.getName() + "=? ";
     }
+    return pagination(where, pgn, DBField.values(Arrays.asList(fields)));
+  }
 
-    return pagination(where, pgn);
+  public T getByFields(DBField... fields) throws Exception {
+    checkNotNull(fields, "fields can not be null");
+    String where = "1=1 ";
+    for (DBField field : fields) {
+      where += "and " + field.getName() + "=? ";
+    }
+    return single(where, DBField.values(Arrays.asList(fields)));
   }
 
   /**
@@ -112,6 +122,7 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    * @throws Exception
    */
   public void insert(T t) throws Exception {
+    checkNotNull(t, "t can not be null");
     String sql = OceanusSqlBuilder.instance(clazz).insert().build();
 
     Object[] params = getFieldsValues(t);
@@ -125,6 +136,8 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    * @throws Exception
    */
   public void insert(List<T> lst) throws Exception {
+    checkNotNull(lst, "lst can not be null");
+    checkArgument(lst.size() > 0, "lst has no element");
     String sql = OceanusSqlBuilder.instance(clazz).insert().build();
 
     List<Object[]> params = Lists.newArrayList();
@@ -144,6 +157,7 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    * @throws Exception
    */
   public void update(T t, String... fields) throws Exception {
+    checkNotNull(t, "t can not be null");
     String sql = OceanusSqlBuilder.instance(clazz).update(t, fields).build();
 
     List<Object> params = Arrays.asList((getFieldsValues(t, fields)));
@@ -158,6 +172,7 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    * @throws Exception
    */
   public void delete(Object key) throws Exception {
+    checkNotNull(key, "key can not be null");
     delete(String.format("%s=?", getAutoIncrementFieldName()), key);
   }
 
@@ -169,6 +184,7 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    * @throws Exception
    */
   public void delete(String where, Object... values) throws Exception {
+    checkNotNull(where, "where can not be null");
     String sql = OceanusSqlBuilder.instance(clazz).delete().where(where).build();
     excuteUpdate(sql, values);
   }
@@ -184,6 +200,7 @@ public class OceanusSupportImpl<T extends OceaunsEntity> extends BaseDaoEx
    */
   public OceanusResult<T> pagination(String where, Pagination pgn, Object... values)
       throws Exception {
+    checkNotNull(where, "where can not be null");
     pgn = checkPgn(pgn);
 
     // list

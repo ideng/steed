@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @param <T>
  */
-public class OceanusResult<T extends OceaunsEntity> {
+public class OceanusResult<T extends OceanusEntity> {
 
   private int total = 0;
 
